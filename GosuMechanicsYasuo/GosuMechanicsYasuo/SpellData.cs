@@ -1,25 +1,20 @@
-﻿#region LICENSE
-
-// Copyright 2014 - 2014 Support
-// SpellData.cs is part of Support.
-// Support is free software: you can redistribute it and/or modify
+﻿// Copyright 2014 - 2015 Esk0r
+// SpellData.cs is part of Evade.
+// 
+// Evade is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// Support is distributed in the hope that it will be useful,
+// 
+// Evade is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
+// 
 // You should have received a copy of the GNU General Public License
-// along with Support. If not, see <http://www.gnu.org/licenses/>.
-
-#endregion
-
-#region
+// along with Evade. If not, see <http://www.gnu.org/licenses/>.
 
 using LeagueSharp;
-
-#endregion
 
 namespace GosuMechanicsYasuo
 {
@@ -29,23 +24,25 @@ namespace GosuMechanicsYasuo
         public bool CanBeRemoved = false;
         public bool Centered;
         public string ChampionName;
-        public CollisionObjectTypes[] CollisionObjects = {};
+        public CollisionObjectTypes[] CollisionObjects = { };
         public int DangerValue;
         public int Delay;
         public bool DisableFowDetection = false;
         public bool DontAddExtraDuration;
+        public bool DontCheckForDuplicates = false;
         public bool DontCross = false;
         public bool DontRemove = false;
         public int ExtraDuration;
-        public string[] ExtraMissileNames = {};
+        public string[] ExtraMissileNames = { };
         public int ExtraRange = -1;
-        public string[] ExtraSpellNames = {};
+        public string[] ExtraSpellNames = { };
         public bool FixedRange;
         public bool ForceRemove = false;
         public string FromObject = "";
-        public string[] FromObjects = {};
+        public string[] FromObjects = { };
         public int Id = -1;
         public bool Invert;
+        public bool Targeted;
         public bool IsDangerous = false;
         public int MissileAccel = 0;
         public bool MissileDelayed;
@@ -53,6 +50,7 @@ namespace GosuMechanicsYasuo
         public int MissileMaxSpeed;
         public int MissileMinSpeed;
         public int MissileSpeed;
+        public string ProjectileParticleName = "";
         public string MissileSpellName = "";
         public float MultipleAngle;
         public int MultipleNumber = -1;
@@ -104,7 +102,7 @@ namespace GosuMechanicsYasuo
             {
                 return (!AddHitbox)
                     ? _radius
-                    : _radius + (int) ObjectManager.Player.BoundingRadius;
+                    : _radius + (int)ObjectManager.Player.BoundingRadius;
             }
             set { _radius = value; }
         }

@@ -19,7 +19,8 @@ namespace GosuMechanicsYasuo
         public static Spell Ignite;
         public static Menu Config;
         public static Orbwalking.Orbwalker Orbwalker;
-        public static List<Skillshot> DetectedSkillshots = new List<Skillshot>();
+        public static List<Skillshot> DetectedSkillShots = new List<Skillshot>();
+        public static List<Skillshot> EvadeDetectedSkillshots = new List<Skillshot>();
         public static Menu skillShotMenu;
         public static bool isDashing;
         public static YasWall wall = new YasWall();
@@ -96,7 +97,7 @@ namespace GosuMechanicsYasuo
             TargetSelector.AddToMenu(TargetSelectorMenu);
             Config.AddSubMenu(TargetSelectorMenu);
 
-            Config.AddSubMenu(new Menu("Combo", "combo"));
+            Config.AddSubMenu(new Menu("Combo Settings", "combo"));
             Config.SubMenu("combo").AddItem(new MenuItem("QC", "Use Q")).SetValue(true);
             Config.SubMenu("combo").AddItem(new MenuItem("EC", "Use E")).SetValue(true);
             Config.SubMenu("combo").AddItem(new MenuItem("E1", "when enemy range >=")).SetValue(new Slider(375, 475, 1));
@@ -114,50 +115,88 @@ namespace GosuMechanicsYasuo
             Config.SubMenu("combo").AddItem(new MenuItem("R5", "when knockedUp enemy is >=")).SetValue(new Slider(3, 5, 1));
             Config.SubMenu("combo").AddItem(new MenuItem("R6", "when <= enemy in range")).SetValue(new Slider(2, 5, 1));
             Config.SubMenu("combo").AddItem(new MenuItem("R7", "when myHero HP is >=")).SetValue(new Slider(50, 101, 1));
-
-            Config.AddSubMenu(new Menu("Harass", "Harass"));
+            //Harass / AutoQ
+            Config.AddSubMenu(new Menu("Harass Settings", "Harass"));
+            Config.SubMenu("Harass").AddItem(new MenuItem("AutoQHarass", "Harass Toggle")).SetValue(new KeyBind('L', KeyBindType.Toggle, true));
             Config.SubMenu("Harass").AddItem(new MenuItem("HarassQ", "Use Q12")).SetValue(true);
             Config.SubMenu("Harass").AddItem(new MenuItem("HarassQ3", "Use Q3")).SetValue(true);
             Config.SubMenu("Harass").AddItem(new MenuItem("HarassTower", "Harass UnderTower")).SetValue(true);
-
-            Config.AddSubMenu(new Menu("LastHit", "LastHit"));
+            //LastHit
+            Config.AddSubMenu(new Menu("LastHit Settings", "LastHit"));
             Config.SubMenu("LastHit").AddItem(new MenuItem("LastHitQ1", "Use Q12")).SetValue(true);
             Config.SubMenu("LastHit").AddItem(new MenuItem("LastHitQ3", "Use Q3")).SetValue(true);
             Config.SubMenu("LastHit").AddItem(new MenuItem("LastHitE", "Use E")).SetValue(true);
-
-            Config.AddSubMenu(new Menu("Clear", "Clear"));
+            //LaneClear / JungleClear
+            Config.AddSubMenu(new Menu("Clear Settings", "Clear"));
             Config.SubMenu("Clear").AddItem(new MenuItem("LaneClearQ1", "Use Q12")).SetValue(true);
             Config.SubMenu("Clear").AddItem(new MenuItem("LaneClearQ3", "Use Q3")).SetValue(true);
-            Config.SubMenu("Clear").AddItem(new MenuItem("LaneClearQ3count", "when Q3 will hit minions >= ")).SetValue(new Slider(2, 5, 0));
+            Config.SubMenu("Clear").AddItem(new MenuItem("LaneClearQ3count", "when Q3 will hit minions >= ")).SetValue(new Slider(2, 5, 1));
             Config.SubMenu("Clear").AddItem(new MenuItem("LaneClearE", "Use E")).SetValue(true);
             Config.SubMenu("Clear").AddItem(new MenuItem("LaneClearItems", "Use Items")).SetValue(true);
             //Flee away
-            Config.AddSubMenu(new Menu("Escape", "Escape"));
+            Config.AddSubMenu(new Menu("Escape Settings", "Escape"));
             Config.SubMenu("Escape").AddItem(new MenuItem("flee", "Escape")).SetValue(new KeyBind('Z', KeyBindType.Press, false));
             Config.SubMenu("Escape").AddItem(new MenuItem("AutoQ1", "Use Q Stack")).SetValue(true);
            
             Config.AddSubMenu(new Menu("WindWall Settings", "aShots"));
             //SmartW
             Config.SubMenu("aShots").AddItem(new MenuItem("smartW", "Use Auto WindWall")).SetValue(true);
-            Config.SubMenu("aShots").AddItem(new MenuItem("smartWDelay", "WindWall Delay")).SetValue(new Slider(3000, 500, 0));
+            Config.SubMenu("aShots").AddItem(new MenuItem("smartWDelay", "WindWall Delay")).SetValue(new Slider(3000, 3000, 500));
             Config.SubMenu("aShots").AddItem(new MenuItem("smartEDogue", "Use E-Vade")).SetValue(true);
             Config.SubMenu("aShots").AddItem(new MenuItem("wwDanger", "Block only dangerous")).SetValue(false);
             skillShotMenu = getSkilshotMenu();
             Config.SubMenu("aShots").AddSubMenu(skillShotMenu);
-
-            Config.AddSubMenu(new Menu("Misc", "misc"));
+            //Misc
+            Config.AddSubMenu(new Menu("Misc Settings", "misc"));
             Config.SubMenu("misc").AddItem(new MenuItem("ETower", "Dont Jump turrets")).SetValue(true);
             Config.SubMenu("misc").AddItem(new MenuItem("KS", "KillSteal")).SetValue(true);
             Config.SubMenu("misc").AddItem(new MenuItem("IntAnt", "Use Q3 - AntiGapcloser/Interrupter")).SetValue(true);
+
+            Config.AddSubMenu(new Menu("Draw Settings", "Draw"));
+            Config.SubMenu("Draw").AddItem(new MenuItem("Disable", "Disable all draws")).SetValue(true);
+            Config.SubMenu("Draw").AddItem(new MenuItem("DrawQ", "Draw Q12 Range")).SetValue(true);
+            Config.SubMenu("Draw").AddItem(new MenuItem("DrawQ3", "Draw Q3 Range")).SetValue(true);
+            Config.SubMenu("Draw").AddItem(new MenuItem("DrawW", "Draw W Range")).SetValue(true);
+            Config.SubMenu("Draw").AddItem(new MenuItem("DrawE", "Draw E Range")).SetValue(true);
+            Config.SubMenu("Draw").AddItem(new MenuItem("DrawR", "Draw R Range")).SetValue(true);
 
             Config.AddToMainMenu();
 
             SkillshotDetector.OnDetectSkillshot += OnDetectSkillshot;
             SkillshotDetector.OnDeleteMissile += OnDeleteMissile;
             Game.OnUpdate += Game_OnUpdate;
+            Drawing.OnDraw += Drawing_OnDraw;
             Obj_AI_Base.OnPlayAnimation += Obj_AI_Base_OnPlayAnimation;
             Interrupter2.OnInterruptableTarget += Interrupter2_OnInterruptableTarget;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloser_OnEnemyGapcloser;  
+        }
+
+        private static void Drawing_OnDraw(EventArgs args)
+        {
+            if (Config.Item("Disable").GetValue<bool>())
+            {
+                return;
+            }
+            if (Config.Item("DrawQ").GetValue<bool>() && Q.IsReady())
+            {
+                Drawing.DrawCircle(myHero.ServerPosition, Q.Range, Color.LightGreen);
+            }
+            if (Config.Item("DrawQ3").GetValue<bool>() && Q3.IsReady())
+            {
+                Drawing.DrawCircle(myHero.ServerPosition, Q3.Range, Color.LightGreen);
+            }
+            if (Config.Item("DrawW").GetValue<bool>() && W.IsReady())
+            {
+                Drawing.DrawCircle(myHero.ServerPosition, W.Range, Color.LightGreen);
+            }
+            if (Config.Item("DrawE").GetValue<bool>() && E.IsReady())
+            {
+                Drawing.DrawCircle(myHero.ServerPosition, E.Range, Color.LightGreen);
+            }
+            if (Config.Item("DrawR").GetValue<bool>() && R.IsReady())
+            {
+                Drawing.DrawCircle(myHero.ServerPosition, R.Range, Color.LightGreen);
+            }
         }
 
         private static void AntiGapcloser_OnEnemyGapcloser(ActiveGapcloser gapcloser)
@@ -196,14 +235,14 @@ namespace GosuMechanicsYasuo
         }
         private static void Game_OnUpdate(EventArgs args)
         {
-            DetectedSkillshots.RemoveAll(skillshot => !skillshot.IsActive());
+            EvadeDetectedSkillshots.RemoveAll(skillshot => !skillshot.IsActive());
 
-            foreach (var mis in DetectedSkillshots)
+            foreach (var mis in EvadeDetectedSkillshots)
             {
                 if (Config.Item("smartW").GetValue<bool>())
                     useWSmart(mis);
 
-                if (Config.Item("smartEDogue").GetValue<bool>() && !isSafePoint(ObjectManager.Player.Position.To2D(), true).IsSafe)
+                if (Config.Item("smartEDogue").GetValue<bool>() && !isSafePoint(ObjectManager.Player.Position.To2D(), true).IsSafe && !W.IsReady())
                     useEtoSafe(mis);
             }
             if (Config.Item("flee").GetValue<KeyBind>().Active)
@@ -224,17 +263,73 @@ namespace GosuMechanicsYasuo
             {
                 LastHit();
             }
+            if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Mixed)
+            {
+                Harass();
+            }
 
             AutoR();
             KillSteal();
+           
+            if (Config.Item("AutoQHarass").GetValue<KeyBind>().Active)
+            {
+                var TsTarget = TargetSelector.GetTarget(1300, TargetSelector.DamageType.Physical);
 
+                if (TsTarget == null)
+                {
+                    return;
+                }
+                if (TsTarget != null && Config.Item("HarassTower").GetValue<bool>())
+                {
+
+                    if (Q3.IsReady() && Config.Item("HarassQ3").GetValue<bool>() && !IsDashing && Q3READY() && Q3.IsInRange(TsTarget))
+                    {
+                        PredictionOutput Q3Pred = Q3.GetPrediction(TsTarget);
+
+                        Q3.Cast(Q3Pred.CastPosition);
+                    }
+                    else if (!Q3READY() && Q.IsReady() && Config.Item("HarassQ").GetValue<bool>() && !IsDashing && Q.IsInRange(TsTarget))
+                    {
+                        PredictionOutput QPred = Q.GetPrediction(TsTarget);
+
+                        Q.Cast(QPred.CastPosition);
+                    }
+                }
+                else if (TsTarget != null && !Config.Item("HarassTower").GetValue<bool>())
+                {
+                    if (!UnderTower(myHero.ServerPosition.To2D()) && Q3.IsReady() && Config.Item("HarassQ3").GetValue<bool>() && !IsDashing && Q3READY() && Q3.IsInRange(TsTarget))
+                    {
+                        PredictionOutput Q3Pred = Q3.GetPrediction(TsTarget);
+
+                        Q3.Cast(Q3Pred.CastPosition);
+                    }
+                    if (!Q3READY() && Q.IsReady() && Config.Item("HarassQ").GetValue<bool>() && !IsDashing && !UnderTower(myHero.ServerPosition.To2D()) && Q.IsInRange(TsTarget))
+                    {
+                        PredictionOutput QPred = Q.GetPrediction(TsTarget);
+
+                        Q.Cast(QPred.CastPosition);
+                    }
+                }
+            }
+        }
+
+        public static bool Q3READY()
+        {
+            return ObjectManager.Player.HasBuff("YasuoQ3W");
+        }
+
+        public static bool CanCastE(Obj_AI_Base target)
+        {
+            return !target.HasBuff("YasuoDashWrapper");
+        }
+        public static void Harass()
+        {
             var TsTarget = TargetSelector.GetTarget(1300, TargetSelector.DamageType.Physical);
 
             if (TsTarget == null)
             {
                 return;
             }
-
             if (TsTarget != null && Config.Item("HarassTower").GetValue<bool>())
             {
 
@@ -267,17 +362,6 @@ namespace GosuMechanicsYasuo
                 }
             }
         }
-
-        public static bool Q3READY()
-        {
-            return ObjectManager.Player.HasBuff("YasuoQ3W");
-        }
-
-        public static bool CanCastE(Obj_AI_Base target)
-        {
-            return !target.HasBuff("YasuoDashWrapper");
-        }
-
         public static void Flee()
         {
             var minions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, E.Range);
@@ -334,7 +418,7 @@ namespace GosuMechanicsYasuo
                     return;
                 }
 
-                if (!minion.IsDead && minion != null && Config.Item("LastHitQ1").GetValue<bool>() && Q.IsReady() && minion.IsValidTarget(500) && !Q3READY())
+                if (!minion.IsDead && minion != null && Config.Item("LastHitQ1").GetValue<bool>() && Q.IsReady() && minion.IsValidTarget(500) && !Q3READY() && Q.IsInRange(minion))
                 {
                     var predHealth = HealthPrediction.GetHealthPrediction(minion, (int)(Program.myHero.Distance(minion.Position) * 1000 / 2000));
                     if (predHealth <= GetQDmg(minion))
@@ -342,7 +426,7 @@ namespace GosuMechanicsYasuo
                         Q.Cast(minion.ServerPosition, true);
                     }
                 }
-                if (!minion.IsDead && minion != null && Config.Item("LastHitQ3").GetValue<bool>() && Q.IsReady() && minion.IsValidTarget(1100) && Q3READY())
+                if (!minion.IsDead && minion != null && Config.Item("LastHitQ3").GetValue<bool>() && Q.IsReady() && minion.IsValidTarget(1100) && Q3READY() && Q3.IsInRange(minion))
                 {
                     var predHealth = HealthPrediction.GetHealthPrediction(minion, (int)(Program.myHero.Distance(minion.Position) * 1000 / 2000));
                     if (predHealth <= GetQDmg(minion))
@@ -372,7 +456,7 @@ namespace GosuMechanicsYasuo
                 {
                     return;
                 }
-                if (minion != null && Config.Item("LaneClearQ1").GetValue<bool>() && Q.IsReady() && minion.IsValidTarget(500) && !Q3READY())
+                if (minion != null && Config.Item("LaneClearQ1").GetValue<bool>() && Q.IsReady() && minion.IsValidTarget(500) && !Q3READY() && Q.IsInRange(minion))
                 {
                     var predHealth = HealthPrediction.LaneClearHealthPrediction(minion, (int)(Program.myHero.Distance(minion.Position) * 1000 / 2000));
                     if (predHealth <= GetQDmg(minion))
@@ -389,7 +473,7 @@ namespace GosuMechanicsYasuo
                         }
                     }
                 }
-                if (!minion.IsDead && minion != null && Config.Item("LaneClearQ3").GetValue<bool>() && Q3.IsReady() && minion.IsValidTarget(1100) && Q3READY())
+                if (!minion.IsDead && minion != null && Config.Item("LaneClearQ3").GetValue<bool>() && Q3.IsReady() && minion.IsValidTarget(1100) && Q3READY() && Q3.IsInRange(minion))
                 {
                     var predHealth = HealthPrediction.LaneClearHealthPrediction(minion, (int)(Program.myHero.Distance(minion.Position) * 1000 / 2000));
                     if (predHealth <= GetQDmg(minion))
@@ -733,7 +817,7 @@ namespace GosuMechanicsYasuo
                 result.IsSafe = false;
                 return result;
             }
-            foreach (var skillshot in DetectedSkillshots)
+            foreach (var skillshot in EvadeDetectedSkillshots)
             {
                 if (skillshot.IsDanger(point) && skillshot.IsAboutToHit(500, myHero))
                 {
@@ -1037,7 +1121,7 @@ namespace GosuMechanicsYasuo
                                 new MenuItem("IsDangerous" + spell.MenuItemName, "Is Dangerous").SetValue(
                                     spell.IsDangerous));
 
-                            subMenu.AddItem(new MenuItem("Draw" + spell.MenuItemName, "Draw").SetValue(true));
+                            //subMenu.AddItem(new MenuItem("Draw" + spell.MenuItemName, "Draw").SetValue(true));
                             subMenu.AddItem(new MenuItem("Enabled" + spell.MenuItemName, "Enabled").SetValue(true));
 
                             skillShots.AddSubMenu(subMenu);
@@ -1068,7 +1152,7 @@ namespace GosuMechanicsYasuo
 
         public static void updateSkillshots()
         {
-            foreach (var ss in DetectedSkillshots)
+            foreach (var ss in EvadeDetectedSkillshots)
             {
                 ss.Game_OnGameUpdate();
             }
@@ -1080,14 +1164,14 @@ namespace GosuMechanicsYasuo
             {
                 var spellData = SpellDatabase.GetByName("VelkozQSplit");
                 var direction = skillshot.Direction.Perpendicular();
-                if (DetectedSkillshots.Count(s => s.SpellData.SpellName == "VelkozQSplit") == 0)
+                if (EvadeDetectedSkillshots.Count(s => s.SpellData.SpellName == "VelkozQSplit") == 0)
                 {
                     for (var i = -1; i <= 1; i = i + 2)
                     {
                         var skillshotToAdd = new Skillshot(
                             DetectionType.ProcessSpell, spellData, Environment.TickCount, missile.Position.To2D(),
                             missile.Position.To2D() + i * direction * spellData.Range, skillshot.Unit);
-                        DetectedSkillshots.Add(skillshotToAdd);
+                        EvadeDetectedSkillshots.Add(skillshotToAdd);
                     }
                 }
             }
@@ -1186,7 +1270,7 @@ namespace GosuMechanicsYasuo
         {
             var alreadyAdded = false;
 
-            foreach (var item in DetectedSkillshots)
+            foreach (var item in EvadeDetectedSkillshots)
             {
                 if (item.SpellData.SpellName == skillshot.SpellData.SpellName &&
                     (item.Unit.NetworkId == skillshot.Unit.NetworkId &&
@@ -1231,7 +1315,7 @@ namespace GosuMechanicsYasuo
                                 skillshot.DetectionType, skillshot.SpellData, skillshot.StartTick, skillshot.Start, end,
                                 skillshot.Unit);
 
-                            DetectedSkillshots.Add(skillshotToAdd);
+                            EvadeDetectedSkillshots.Add(skillshotToAdd);
                         }
                         return;
                     }
@@ -1248,7 +1332,7 @@ namespace GosuMechanicsYasuo
                         var skillshotToAdd = new Skillshot(
                             skillshot.DetectionType, skillshot.SpellData, skillshot.StartTick, skillshot.Start, end,
                             skillshot.Unit);
-                        DetectedSkillshots.Add(skillshotToAdd);
+                        EvadeDetectedSkillshots.Add(skillshotToAdd);
                         return;
                     }
 
@@ -1259,7 +1343,7 @@ namespace GosuMechanicsYasuo
                         var skillshotToAdd = new Skillshot(
                             skillshot.DetectionType, skillshot.SpellData, skillshot.StartTick, start, end,
                             skillshot.Unit);
-                        DetectedSkillshots.Add(skillshotToAdd);
+                        EvadeDetectedSkillshots.Add(skillshotToAdd);
                         return;
                     }
 
@@ -1287,7 +1371,7 @@ namespace GosuMechanicsYasuo
                                 var skillshotToAdd = new Skillshot(
                                     skillshot.DetectionType, skillshot.SpellData, skillshot.StartTick, start, end,
                                     skillshot.Unit);
-                                DetectedSkillshots.Add(skillshotToAdd);
+                                EvadeDetectedSkillshots.Add(skillshotToAdd);
                             }
                         }
                         return;
@@ -1300,7 +1384,7 @@ namespace GosuMechanicsYasuo
                         var skillshotToAdd = new Skillshot(
                             skillshot.DetectionType, skillshot.SpellData, skillshot.StartTick, start, end,
                             skillshot.Unit);
-                        DetectedSkillshots.Add(skillshotToAdd);
+                        EvadeDetectedSkillshots.Add(skillshotToAdd);
                         return;
                     }
 
@@ -1329,8 +1413,8 @@ namespace GosuMechanicsYasuo
                             skillshot.DetectionType, bounce2SpellData, skillshot.StartTick, bounce1Pos, bounce2Pos,
                             skillshot.Unit);
 
-                        DetectedSkillshots.Add(bounce1);
-                        DetectedSkillshots.Add(bounce2);
+                        EvadeDetectedSkillshots.Add(bounce1);
+                        EvadeDetectedSkillshots.Add(bounce2);
                     }
 
                     if (skillshot.SpellData.SpellName == "ZiggsR")
@@ -1343,7 +1427,7 @@ namespace GosuMechanicsYasuo
                     {
                         var endPos = new Vector2();
 
-                        foreach (var s in DetectedSkillshots)
+                        foreach (var s in EvadeDetectedSkillshots)
                         {
                             if (s.Unit.NetworkId == skillshot.Unit.NetworkId && s.SpellData.Slot == SpellSlot.E)
                             {
@@ -1378,7 +1462,7 @@ namespace GosuMechanicsYasuo
                         skillshot.DetectionType, endCSpellData, skillshot.StartTick, skillshot.Start, skillshot.End,
                         skillshot.Unit);
 
-                    DetectedSkillshots.Add(skillshotToAdd);
+                    EvadeDetectedSkillshots.Add(skillshotToAdd);
                 }
 
 
@@ -1391,7 +1475,7 @@ namespace GosuMechanicsYasuo
                     Console.WriteLine(Environment.TickCount + "Adding new skillshot: " + skillshot.SpellData.SpellName);
 #endif
 
-                DetectedSkillshots.Add(skillshot);
+                EvadeDetectedSkillshots.Add(skillshot);
             }
         }
     }
