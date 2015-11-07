@@ -3815,26 +3815,6 @@ namespace GosuMechanicsYasuo
                     MissileSpellName = "",
                 });
 
-            Spells.Add(
-                new SpellData
-                {
-                    ChampionName = "Veigar",
-                    SpellName = "VeigarBalefulStrike",
-                    Slot = SpellSlot.R,
-                    Type = SkillShotType.SkillshotLine,
-                    Delay = 250,
-                    Range = 650,
-                    Radius = 60,
-                    MissileSpeed = 1500,
-                    FixedRange = false,
-                    AddHitbox = false,
-                    DangerValue = 2,
-                    IsDangerous = false,
-                    MissileSpellName = "",
-                    Targeted = true,
-                    CollisionObjects = new[] { CollisionObjectTypes.YasuoWall }
-                });
-
             #endregion Veigar
 
             #region Velkoz
