@@ -27,6 +27,24 @@ namespace GosuMechanicsYasuo
         public static YasWall wall = new YasWall();
         public static Obj_AI_Hero myHero { get { return ObjectManager.Player; } }
         public static float HealthPercent { get { return myHero.Health / myHero.MaxHealth * 100; } }
+
+        private static readonly Vector2 spot1 = new Vector2(7372, 5858);
+        private static readonly Vector2 spot2 = new Vector2(8222, 3158);
+        private static readonly Vector2 spot3 = new Vector2(3674, 7058);
+        private static readonly Vector2 spot4 = new Vector2(3788, 7422);
+        private static readonly Vector2 spot5 = new Vector2(8372, 9606);
+        private static readonly Vector2 spot6 = new Vector2(6650, 11766);
+        private static readonly Vector2 spot7 = new Vector2(1678, 8428);
+        private static readonly Vector2 spot8 = new Vector2(10822, 7456);
+        private static readonly Vector2 spot9 = new Vector2(11160, 7504);
+        private static readonly Vector2 spot10 = new Vector2(6424, 5208);
+        private static readonly Vector2 spot11 = new Vector2(13172, 6508);
+        private static readonly Vector2 spot12 = new Vector2(11222, 7856);
+        private static readonly Vector2 spot13 = new Vector2(10372, 8456);
+        private static readonly Vector2 spot14 = new Vector2(4324, 6258);
+        private static readonly Vector2 spot15 = new Vector2(6488, 11192);
+        private static readonly Vector2 spot16 = new Vector2(7672, 8906);
+
         public struct IsSafeResult
         {
             public bool IsSafe;
@@ -156,7 +174,7 @@ namespace GosuMechanicsYasuo
             //Flee away
             Config.AddSubMenu(new Menu("Escape Settings", "Escape"));
             Config.SubMenu("Escape").AddItem(new MenuItem("flee", "Escape")).SetValue(new KeyBind('Z', KeyBindType.Press, false));
-            //Config.SubMenu("Escape").AddItem(new MenuItem("jump", "WallJump Escape")).SetValue(new KeyBind('V', KeyBindType.Press, false));
+            //Config.SubMenu("Escape").AddItem(new MenuItem("wall", "WallJump Escape")).SetValue(new KeyBind('V', KeyBindType.Press, false));
             Config.SubMenu("Escape").AddItem(new MenuItem("AutoQ1", "Use Q Stack while Dashing")).SetValue(true);
             Config.SubMenu("Escape").AddItem(new MenuItem("AutoQToggle", "Auto Q Minion Toggle (Normal)")).SetValue(new KeyBind('K', KeyBindType.Toggle, true));
 
@@ -175,15 +193,15 @@ namespace GosuMechanicsYasuo
             Config.SubMenu("misc").AddItem(new MenuItem("ETower", "Dont Jump turrets")).SetValue(true);
             Config.SubMenu("misc").AddItem(new MenuItem("KS", "KillSteal")).SetValue(true);
             Config.SubMenu("misc").AddItem(new MenuItem("IntAnt", "Use Q3 - AntiGapcloser/Interrupter")).SetValue(true);
-
+            //draw
             Config.AddSubMenu(new Menu("Draw Settings", "Draw"));
-            Config.SubMenu("Draw").AddItem(new MenuItem("Disable", "Disable all draws")).SetValue(true);
+            Config.SubMenu("Draw").AddItem(new MenuItem("Disable", "Disable all draws")).SetValue(false);
             Config.SubMenu("Draw").AddItem(new MenuItem("DrawQ", "Draw Q12 Range")).SetValue(true);
             Config.SubMenu("Draw").AddItem(new MenuItem("DrawQ3", "Draw Q3 Range")).SetValue(true);
             Config.SubMenu("Draw").AddItem(new MenuItem("DrawW", "Draw W Range")).SetValue(true);
             Config.SubMenu("Draw").AddItem(new MenuItem("DrawE", "Draw E Range")).SetValue(true);
             Config.SubMenu("Draw").AddItem(new MenuItem("DrawR", "Draw R Range")).SetValue(true);
-            //Config.SubMenu("Draw").AddItem(new MenuItem("DrawSpots", "Draw WallJump Spots")).SetValue(true);
+            Config.SubMenu("Draw").AddItem(new MenuItem("DrawSpots", "Draw WallJump Spots")).SetValue(true);
 
             Config.AddToMainMenu();
 
@@ -194,35 +212,7 @@ namespace GosuMechanicsYasuo
             Obj_AI_Base.OnPlayAnimation += Obj_AI_Base_OnPlayAnimation;
             Interrupter2.OnInterruptableTarget += Interrupter2_OnInterruptableTarget;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloser_OnEnemyGapcloser;  
-        }
-
-        private static void Drawing_OnDraw(EventArgs args)
-        {
-            if (Config.Item("Disable").GetValue<bool>())
-            {
-                return;
-            }
-            if (Config.Item("DrawQ").GetValue<bool>() && Q.IsReady())
-            {
-                Render.Circle.DrawCircle(myHero.ServerPosition, Q.Range, Color.LightGreen, 2);
-            }
-            if (Config.Item("DrawQ3").GetValue<bool>() && Q3.IsReady())
-            {
-                Render.Circle.DrawCircle(myHero.ServerPosition, Q3.Range, Color.LightGreen, 2);
-            }
-            if (Config.Item("DrawW").GetValue<bool>() && W.IsReady())
-            {
-                Render.Circle.DrawCircle(myHero.ServerPosition, W.Range, Color.LightGreen, 2);
-            }
-            if (Config.Item("DrawE").GetValue<bool>() && E.IsReady())
-            {
-                Render.Circle.DrawCircle(myHero.ServerPosition, E.Range, Color.LightGreen, 2);
-            }
-            if (Config.Item("DrawR").GetValue<bool>() && R.IsReady())
-            {
-                Render.Circle.DrawCircle(myHero.ServerPosition, R.Range, Color.LightGreen, 2);
-            }
-        }
+        }      
 
         private static void AntiGapcloser_OnEnemyGapcloser(ActiveGapcloser gapcloser)
         {
@@ -488,7 +478,7 @@ namespace GosuMechanicsYasuo
         public static void LaneClear()
         {
             List<Obj_AI_Base> Qminion = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, 1000, MinionTypes.All, MinionTeam.NotAlly);
-            foreach (var minion in Qminion.Where(minion => minion.IsValidTarget(E.Range)))
+            foreach (var minion in Qminion.Where(minion => minion.IsValidTarget(Q3.Range)))
             {
                 if (minion == null)
                 {
@@ -501,7 +491,7 @@ namespace GosuMechanicsYasuo
                     {
                         CastQ12(minion);
                     }
-                    else if (!Q3READY())
+                    else if (!Q3READY() && Q.IsInRange(minion))
                     {
                         List<Vector2> minionPs = GetCastMinionsPredictedPositions(Qminion, .025f, 50f, float.MaxValue, myHero.ServerPosition, 475f, false, SkillshotType.SkillshotLine);
                         MinionManager.FarmLocation farm = Q.GetLineFarmLocation(minionPs);
@@ -518,7 +508,7 @@ namespace GosuMechanicsYasuo
                     {
                         CastQ3(minion);
                     }
-                    else if (Q3READY())
+                    else if (Q3READY() && Q3.IsInRange(minion))
                     {
                         List<Vector2> minionPs = GetCastMinionsPredictedPositions(Qminion, .025f, 50f, float.MaxValue, myHero.ServerPosition, 1000f, false, SkillshotType.SkillshotLine);
                         MinionManager.FarmLocation farm = Q3.GetLineFarmLocation(minionPs);
@@ -553,15 +543,20 @@ namespace GosuMechanicsYasuo
                     UseItems(minion);
                 }
             }
-            foreach (var jungleMobs in allMinionsE.Where(x => x.IsValidTarget(E.Range) && CanCastE(x) && x.Team == GameObjectTeam.Neutral))
+            var jminions = MinionManager.GetMinions(myHero.ServerPosition, E.Range, MinionTypes.All, MinionTeam.Neutral);
+            foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Q3.Range)))
             {
                 if (jungleMobs == null)
                 {
                     return;
                 }
-                if (Config.Item("LaneClearE").GetValue<bool>() && E.IsReady() && jungleMobs != null && jungleMobs.IsValidTarget(E.Range))
+                if (Config.Item("LaneClearE").GetValue<bool>() && E.IsReady() && jungleMobs != null && jungleMobs.IsValidTarget(E.Range) && CanCastE(jungleMobs))
                 {
                     E.CastOnUnit(jungleMobs);
+                }
+                if (jungleMobs != null && Config.Item("LaneClearQ3").GetValue<bool>() && Q3.IsReady() && jungleMobs.IsValidTarget(500) && Q3READY() && Q3.IsInRange(jungleMobs))
+                {
+                    CastQ3(jungleMobs);
                 }
             }
         }
@@ -656,13 +651,9 @@ namespace GosuMechanicsYasuo
                     }
                 }
             }
-            if (E.IsReady() && Config.Item("EC").GetValue<bool>())
+            if (E.IsReady() && Config.Item("EC").GetValue<bool>() && TsTarget != null)
             {
                 if (TsTarget.Distance(myHero) >= (Config.Item("E1").GetValue<Slider>().Value) && CanCastE(TsTarget) && myHero.IsFacing(TsTarget))
-                {
-                    useENormal(TsTarget);
-                }
-                else if (TsTarget.Distance(myHero) >= (Config.Item("E1").GetValue<Slider>().Value) && CanCastE(TsTarget) && myHero.IsFacing(TsTarget) && UnderTower(PosAfterE(TsTarget)) && Q.IsKillable(TsTarget) || E.IsKillable(TsTarget) || R.IsKillable(TsTarget))
                 {
                     E.CastOnUnit(TsTarget, true);
                 }
@@ -670,7 +661,7 @@ namespace GosuMechanicsYasuo
                 {
                     Utility.DelayAction.Add(200, () => { CastQ12(TsTarget); } );
                 }
-                if (Q3.IsReady() && myHero.Distance(TsTarget) <= E.Range && Q3READY() && TsTarget != null)
+                else if (Q3.IsReady() && myHero.Distance(TsTarget) <= E.Range && Q3READY() && TsTarget != null && E.IsReady())
                 {
                     E.CastOnUnit(TsTarget, true);
                 }
@@ -679,7 +670,7 @@ namespace GosuMechanicsYasuo
                     Utility.DelayAction.Add(200, () => { CastQ3(TsTarget); });
                 }
 
-                if (Config.Item("E3").GetValue<bool>())
+                if (Config.Item("E3").GetValue<bool>() && E.IsReady())
                 {
                     var bestMinion =
                     ObjectManager.Get<Obj_AI_Minion>()
@@ -688,29 +679,21 @@ namespace GosuMechanicsYasuo
                     .OrderByDescending(x => x.Distance(myHero))
                     .FirstOrDefault();
 
-                    if (bestMinion != null && myHero.IsFacing(bestMinion) && TsTarget.Distance(myHero) >= (Config.Item("E2").GetValue<Slider>().Value) && CanCastE(bestMinion) && myHero.IsFacing(bestMinion))
-                    {
-                        useENormal(bestMinion);
-                    }
-                    else if (bestMinion != null && myHero.IsFacing(bestMinion) && TsTarget.Distance(myHero) >= (Config.Item("E2").GetValue<Slider>().Value) && CanCastE(bestMinion) && myHero.IsFacing(bestMinion) && UnderTower(PosAfterE(bestMinion)) && Q.IsKillable(TsTarget) || E.IsKillable(TsTarget) || R.IsKillable(TsTarget))
+                    if (bestMinion != null && TsTarget != null && myHero.IsFacing(bestMinion) && TsTarget.Distance(myHero) >= (Config.Item("E2").GetValue<Slider>().Value) && CanCastE(bestMinion) && myHero.IsFacing(bestMinion))
                     {
                         E.CastOnUnit(bestMinion, true);
                     }
                 }
-                else if (!Config.Item("E3").GetValue<bool>())
+                if (!Config.Item("E3").GetValue<bool>() && E.IsReady())
                 {
-                    var bestMinion =
-                  ObjectManager.Get<Obj_AI_Base>()
+                       var bestMinion =
+                       ObjectManager.Get<Obj_AI_Base>()
                       .Where(x => x.IsValidTarget(E.Range))
                       .Where(x => x.Distance(Game.CursorPos) < ObjectManager.Player.Distance(Game.CursorPos))
                       .OrderByDescending(x => x.Distance(myHero))
                       .FirstOrDefault();
 
-                    if (bestMinion != null && myHero.IsFacing(bestMinion) && TsTarget.Distance(myHero) >= (Config.Item("E2").GetValue<Slider>().Value) && CanCastE(bestMinion) && myHero.IsFacing(bestMinion))
-                    {
-                        useENormal(bestMinion);
-                    }
-                    else if (bestMinion != null && myHero.IsFacing(bestMinion) && TsTarget.Distance(myHero) >= (Config.Item("E2").GetValue<Slider>().Value) && CanCastE(bestMinion) && myHero.IsFacing(bestMinion) && UnderTower(PosAfterE(bestMinion)) && Q.IsKillable(TsTarget) || E.IsKillable(TsTarget) || R.IsKillable(TsTarget))
+                    if (bestMinion != null && TsTarget != null && myHero.IsFacing(bestMinion) && TsTarget.Distance(myHero) >= (Config.Item("E2").GetValue<Slider>().Value) && CanCastE(bestMinion))
                     {
                         E.CastOnUnit(bestMinion, true);
                     }
@@ -857,7 +840,7 @@ namespace GosuMechanicsYasuo
         }
         public static bool UnderTower(Vector2 pos)
         {
-            return ObjectManager.Get<Obj_AI_Turret>().Any(i => i.Health > 0 && i.Distance(pos) <= 950);
+            return ObjectManager.Get<Obj_AI_Turret>().Any(i => i.Health > 0 && i.Distance(pos) <= 950 && i.IsEnemy);
         }
         public static bool IsDashing
         {
@@ -1605,6 +1588,52 @@ namespace GosuMechanicsYasuo
 #endif
 
                 EvadeDetectedSkillshots.Add(skillshot);
+            }
+        }
+        private static void Drawing_OnDraw(EventArgs args)
+        {
+            if (Config.Item("Disable").GetValue<bool>())
+            {
+                return;
+            }
+            if (Config.Item("DrawQ").GetValue<bool>() && Q.IsReady())
+            {
+                Render.Circle.DrawCircle(myHero.ServerPosition, Q.Range, Color.LightGreen, 2);
+            }
+            if (Config.Item("DrawQ3").GetValue<bool>() && Q3.IsReady())
+            {
+                Render.Circle.DrawCircle(myHero.ServerPosition, Q3.Range, Color.LightGreen, 2);
+            }
+            if (Config.Item("DrawW").GetValue<bool>() && W.IsReady())
+            {
+                Render.Circle.DrawCircle(myHero.ServerPosition, W.Range, Color.LightGreen, 2);
+            }
+            if (Config.Item("DrawE").GetValue<bool>() && E.IsReady())
+            {
+                Render.Circle.DrawCircle(myHero.ServerPosition, E.Range, Color.LightGreen, 2);
+            }
+            if (Config.Item("DrawR").GetValue<bool>() && R.IsReady())
+            {
+                Render.Circle.DrawCircle(myHero.ServerPosition, R.Range, Color.LightGreen, 2);
+            }
+            if (Config.Item("DrawSpots").GetValue<bool>())
+            {
+                Render.Circle.DrawCircle(spot1.To3D(), 70, Color.Red);
+                Render.Circle.DrawCircle(spot2.To3D(), 70, Color.Red);
+                Render.Circle.DrawCircle(spot3.To3D(), 70, Color.Red);
+                Render.Circle.DrawCircle(spot4.To3D(), 70, Color.Red);
+                Render.Circle.DrawCircle(spot5.To3D(), 70, Color.Red);
+                Render.Circle.DrawCircle(spot6.To3D(), 70, Color.Red);
+                Render.Circle.DrawCircle(spot7.To3D(), 70, Color.Red);
+                Render.Circle.DrawCircle(spot8.To3D(), 70, Color.Red);
+                Render.Circle.DrawCircle(spot9.To3D(), 70, Color.Red);
+                Render.Circle.DrawCircle(spot10.To3D(), 70, Color.Red);
+                Render.Circle.DrawCircle(spot11.To3D(), 70, Color.Red);
+                Render.Circle.DrawCircle(spot12.To3D(), 70, Color.Red);
+                Render.Circle.DrawCircle(spot13.To3D(), 70, Color.Red);
+                Render.Circle.DrawCircle(spot14.To3D(), 70, Color.Red);
+                Render.Circle.DrawCircle(spot15.To3D(), 70, Color.Red);
+                Render.Circle.DrawCircle(spot16.To3D(), 70, Color.Red);
             }
         }
     }
