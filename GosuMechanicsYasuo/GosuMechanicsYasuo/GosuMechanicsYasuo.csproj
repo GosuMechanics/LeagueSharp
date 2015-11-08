@@ -57,19 +57,19 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="clipper_library">
-      <HintPath>D:\My Documents\Downloads\LeagueSharp\System\clipper_library.dll</HintPath>
+      <HintPath>D:\My Documents\Downloads\LeagueSharp-5.21-Broly7\LeagueSharp-5.21-Broly7\LeagueSharp Loader\System\clipper_library.dll</HintPath>
     </Reference>
     <Reference Include="LeagueSharp">
-      <HintPath>D:\My Documents\Downloads\LeagueSharp\System\LeagueSharp.dll</HintPath>
+      <HintPath>D:\My Documents\Downloads\LeagueSharp-5.21-Broly7\LeagueSharp-5.21-Broly7\LeagueSharp Loader\System\LeagueSharp.dll</HintPath>
     </Reference>
     <Reference Include="LeagueSharp.Common">
-      <HintPath>D:\My Documents\Downloads\LeagueSharp\System\LeagueSharp.Common.dll</HintPath>
+      <HintPath>D:\My Documents\Downloads\LeagueSharp-5.21-Broly7\LeagueSharp-5.21-Broly7\LeagueSharp Loader\System\LeagueSharp.Common.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX">
-      <HintPath>D:\My Documents\Downloads\LeagueSharp\System\SharpDX.dll</HintPath>
+      <HintPath>D:\My Documents\Downloads\LeagueSharp-5.21-Broly7\LeagueSharp-5.21-Broly7\LeagueSharp Loader\System\SharpDX.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.Direct3D9">
-      <HintPath>D:\My Documents\Downloads\LeagueSharp\System\SharpDX.Direct3D9.dll</HintPath>
+      <HintPath>D:\My Documents\Downloads\LeagueSharp-5.21-Broly7\LeagueSharp-5.21-Broly7\LeagueSharp Loader\System\SharpDX.Direct3D9.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

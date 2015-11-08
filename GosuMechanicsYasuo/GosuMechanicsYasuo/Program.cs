@@ -17,6 +17,7 @@ namespace GosuMechanicsYasuo
         public static Spell E = new Spell(SpellSlot.E, 475);
         public static Spell R = new Spell(SpellSlot.R, 1200);
         public static Spell Ignite;
+        public static Spell Flash;
         public static Menu Config;
         public static Orbwalking.Orbwalker Orbwalker;
         public static List<Skillshot> DetectedSkillShots = new List<Skillshot>();
@@ -26,7 +27,6 @@ namespace GosuMechanicsYasuo
         public static YasWall wall = new YasWall();
         public static Obj_AI_Hero myHero { get { return ObjectManager.Player; } }
         public static float HealthPercent { get { return myHero.Health / myHero.MaxHealth * 100; } }
-
         public struct IsSafeResult
         {
             public bool IsSafe;
@@ -79,12 +79,22 @@ namespace GosuMechanicsYasuo
 
             Q.SetSkillshot(0.25f, 50f, float.MaxValue, false, SkillshotType.SkillshotLine);
             Q3.SetSkillshot(0.5f, 90f, 1200f, false, SkillshotType.SkillshotLine);
-
+            
             var slot = ObjectManager.Player.GetSpellSlot("summonerdot");
             if (slot != SpellSlot.Unknown)
             {
                 Ignite = new Spell(slot, 600, TargetSelector.DamageType.True);
             }
+
+            var Fslot = ObjectManager.Player.GetSpellSlot("SummonerFlash");
+            if (Fslot != SpellSlot.Unknown)
+            {
+                Flash = new Spell(slot, 425);
+            }
+
+            if (myHero.ChampionName != "Yasuo")
+                return;
+
             Config = new Menu("GosuMechanics Yasuo", "Yasuo", true);
             Game.PrintChat("GosuMechanics Yasuo Loaded!");
             Game.PrintChat("Credits to BestTuks for his Windwall and E-vade functions!");
@@ -102,6 +112,10 @@ namespace GosuMechanicsYasuo
             Config.SubMenu("combo").AddItem(new MenuItem("EC", "Use E")).SetValue(true);
             Config.SubMenu("combo").AddItem(new MenuItem("E1", "when enemy range >=")).SetValue(new Slider(375, 475, 1));
             Config.SubMenu("combo").AddItem(new MenuItem("E2", "Use E-GapCloser when enemy range >=")).SetValue(new Slider(475, 1300, 1));
+            Config.SubMenu("combo").AddItem(new MenuItem("E3", "Mode: On = ToTarget / OFF = ToMouse")).SetValue(true);
+            //Config.SubMenu("combo").AddItem(new MenuItem("flash", "Use Flash>E>Q3>R")).SetValue(true);
+            //Config.SubMenu("combo").AddItem(new MenuItem("flash2", "if >= enemy will hit")).SetValue(new Slider(3, 5, 1));
+            //Config.SubMenu("combo").AddItem(new MenuItem("flash3", "and if >= allies in range")).SetValue(new Slider(2, 5, 1));
             Config.SubMenu("combo").AddItem(new MenuItem("Ignite", "Use Ignite")).SetValue(true);
             Config.SubMenu("combo").AddItem(new MenuItem("comboItems", "Use Items")).SetValue(true);
             Config.SubMenu("combo").AddItem(new MenuItem("myHP", "Use BOTRK if my hp <=")).SetValue(new Slider(70, 101, 1));
@@ -133,7 +147,7 @@ namespace GosuMechanicsYasuo
             Config.SubMenu("LastHit").AddItem(new MenuItem("LastHitQ3", "Use Q3")).SetValue(true);
             Config.SubMenu("LastHit").AddItem(new MenuItem("LastHitE", "Use E")).SetValue(true);
             //LaneClear / JungleClear
-            Config.AddSubMenu(new Menu("Clear Settings", "Clear"));
+            Config.AddSubMenu(new Menu("LaneClear/JungleClear Settings", "Clear"));
             Config.SubMenu("Clear").AddItem(new MenuItem("LaneClearQ1", "Use Q12")).SetValue(true);
             Config.SubMenu("Clear").AddItem(new MenuItem("LaneClearQ3", "Use Q3")).SetValue(true);
             Config.SubMenu("Clear").AddItem(new MenuItem("LaneClearQ3count", "when Q3 will hit minions >= ")).SetValue(new Slider(2, 5, 1));
@@ -142,13 +156,17 @@ namespace GosuMechanicsYasuo
             //Flee away
             Config.AddSubMenu(new Menu("Escape Settings", "Escape"));
             Config.SubMenu("Escape").AddItem(new MenuItem("flee", "Escape")).SetValue(new KeyBind('Z', KeyBindType.Press, false));
-            Config.SubMenu("Escape").AddItem(new MenuItem("AutoQ1", "Use Q Stack")).SetValue(true);
-           
+            //Config.SubMenu("Escape").AddItem(new MenuItem("jump", "WallJump Escape")).SetValue(new KeyBind('V', KeyBindType.Press, false));
+            Config.SubMenu("Escape").AddItem(new MenuItem("AutoQ1", "Use Q Stack while Dashing")).SetValue(true);
+            Config.SubMenu("Escape").AddItem(new MenuItem("AutoQToggle", "Auto Q Minion Toggle (Normal)")).SetValue(new KeyBind('K', KeyBindType.Toggle, true));
+
             Config.AddSubMenu(new Menu("WindWall Settings", "aShots"));
             //SmartW
             Config.SubMenu("aShots").AddItem(new MenuItem("smartW", "Use Auto WindWall")).SetValue(true);
+            Config.SubMenu("aShots").AddItem(new MenuItem("smartWDanger", "if Spell DangerLevel >=")).SetValue(new Slider(3, 5, 1));
             Config.SubMenu("aShots").AddItem(new MenuItem("smartWDelay", "WindWall Humanizer (500 = Lowest Reaction Time)")).SetValue(new Slider(5000, 5000, 500));
             Config.SubMenu("aShots").AddItem(new MenuItem("smartEDogue", "Use E-Vade")).SetValue(true);
+            Config.SubMenu("aShots").AddItem(new MenuItem("smartEDogueDanger", "if Spell DangerLevel >=")).SetValue(new Slider(1, 5, 1));
             Config.SubMenu("aShots").AddItem(new MenuItem("wwDanger", "Block only dangerous")).SetValue(false);
             skillShotMenu = getSkilshotMenu();
             Config.SubMenu("aShots").AddSubMenu(skillShotMenu);
@@ -165,6 +183,7 @@ namespace GosuMechanicsYasuo
             Config.SubMenu("Draw").AddItem(new MenuItem("DrawW", "Draw W Range")).SetValue(true);
             Config.SubMenu("Draw").AddItem(new MenuItem("DrawE", "Draw E Range")).SetValue(true);
             Config.SubMenu("Draw").AddItem(new MenuItem("DrawR", "Draw R Range")).SetValue(true);
+            //Config.SubMenu("Draw").AddItem(new MenuItem("DrawSpots", "Draw WallJump Spots")).SetValue(true);
 
             Config.AddToMainMenu();
 
@@ -185,23 +204,23 @@ namespace GosuMechanicsYasuo
             }
             if (Config.Item("DrawQ").GetValue<bool>() && Q.IsReady())
             {
-                Drawing.DrawCircle(myHero.ServerPosition, Q.Range, Color.LightGreen);
+                Render.Circle.DrawCircle(myHero.ServerPosition, Q.Range, Color.LightGreen, 2);
             }
             if (Config.Item("DrawQ3").GetValue<bool>() && Q3.IsReady())
             {
-                Drawing.DrawCircle(myHero.ServerPosition, Q3.Range, Color.LightGreen);
+                Render.Circle.DrawCircle(myHero.ServerPosition, Q3.Range, Color.LightGreen, 2);
             }
             if (Config.Item("DrawW").GetValue<bool>() && W.IsReady())
             {
-                Drawing.DrawCircle(myHero.ServerPosition, W.Range, Color.LightGreen);
+                Render.Circle.DrawCircle(myHero.ServerPosition, W.Range, Color.LightGreen, 2);
             }
             if (Config.Item("DrawE").GetValue<bool>() && E.IsReady())
             {
-                Drawing.DrawCircle(myHero.ServerPosition, E.Range, Color.LightGreen);
+                Render.Circle.DrawCircle(myHero.ServerPosition, E.Range, Color.LightGreen, 2);
             }
             if (Config.Item("DrawR").GetValue<bool>() && R.IsReady())
             {
-                Drawing.DrawCircle(myHero.ServerPosition, R.Range, Color.LightGreen);
+                Render.Circle.DrawCircle(myHero.ServerPosition, R.Range, Color.LightGreen, 2);
             }
         }
 
@@ -254,8 +273,12 @@ namespace GosuMechanicsYasuo
             if (Config.Item("flee").GetValue<KeyBind>().Active)
             {
                 Flee();
-                AutoQ();
+                AutoQFlee();
                 myHero.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos);
+            }
+            if (Config.Item("AutoQToggle").GetValue<KeyBind>().Active && Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.None && !Config.Item("flee").GetValue<KeyBind>().Active)
+            {
+                AutoQ();
             }
             if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo)
             {
@@ -277,12 +300,12 @@ namespace GosuMechanicsYasuo
 
             AutoR();
             KillSteal();
-           
+
             if (Config.Item("AutoQHarass").GetValue<KeyBind>().Active)
             {
-                var TsTarget = TargetSelector.GetTarget(1300, TargetSelector.DamageType.Physical);
-
-                if (TsTarget == null)
+                var TsTarget = TargetSelector.GetTarget(1000, TargetSelector.DamageType.Physical);
+                
+                if (TsTarget == null || myHero.IsRecalling())
                 {
                     return;
                 }
@@ -298,7 +321,7 @@ namespace GosuMechanicsYasuo
                         CastQ12(TsTarget);
                     }
                 }
-                else if (TsTarget != null && !Config.Item("HarassTower").GetValue<bool>())
+                else if (TsTarget != null || TsTarget != null && !Config.Item("HarassTower").GetValue<bool>())
                 {
                     if (!UnderTower(myHero.ServerPosition.To2D()) && Q3.IsReady() && Config.Item("HarassQ3").GetValue<bool>() && !IsDashing && Q3READY() && Q3.IsInRange(TsTarget))
                     {
@@ -394,6 +417,21 @@ namespace GosuMechanicsYasuo
                 }
             }
         }
+        public static void AutoQFlee()
+        {
+            List<Obj_AI_Base> Qminion = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, 1000, MinionTypes.All, MinionTeam.NotAlly);
+            foreach (var minion in Qminion.Where(minion => minion.IsValidTarget(Q.Range) && !minion.IsDead))
+            {
+                if (minion == null)
+                {
+                    return;
+                }
+                if (!Q3READY() && Config.Item("AutoQ1").GetValue<bool>() && minion.IsValidTarget(Q.Range) && IsDashing)
+                {
+                    CastQ12(minion);
+                }
+            }
+        }
         public static void AutoQ()
         {
             List<Obj_AI_Base> Qminion = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, 1000, MinionTypes.All, MinionTeam.NotAlly);
@@ -403,7 +441,7 @@ namespace GosuMechanicsYasuo
                 {
                     return;
                 }
-                if (!Q3READY() && Config.Item("AutoQ1").GetValue<bool>() && minion.IsValidTarget(Q.Range))
+                if (!Q3READY() && Config.Item("AutoQ1").GetValue<bool>() && minion.IsValidTarget(Q.Range) && !IsDashing)
                 {
                     CastQ12(minion);
                 }
@@ -418,7 +456,7 @@ namespace GosuMechanicsYasuo
                     return;
                 }
 
-                if (!minion.IsDead && minion != null && Config.Item("LastHitQ1").GetValue<bool>() && Q.IsReady() && minion.IsValidTarget(500) && !Q3READY() && Q.IsInRange(minion))
+                if (!minion.IsDead && minion != null && Config.Item("LastHitQ1").GetValue<bool>() && Q.IsReady() && minion.IsValidTarget(500) && !Q3READY() && Q.IsInRange(minion) && !IsDashing)
                 {
                     var predHealth = HealthPrediction.GetHealthPrediction(minion, (int)(Program.myHero.Distance(minion.Position) * 1000 / 2000));
                     if (predHealth <= GetQDmg(minion))
@@ -426,7 +464,7 @@ namespace GosuMechanicsYasuo
                         CastQ12(minion);
                     }
                 }
-                if (!minion.IsDead && minion != null && Config.Item("LastHitQ3").GetValue<bool>() && Q.IsReady() && minion.IsValidTarget(1100) && Q3READY() && Q3.IsInRange(minion))
+                if (!minion.IsDead && minion != null && Config.Item("LastHitQ3").GetValue<bool>() && Q.IsReady() && minion.IsValidTarget(1100) && Q3READY() && Q3.IsInRange(minion) && !IsDashing)
                 {
                     var predHealth = HealthPrediction.GetHealthPrediction(minion, (int)(Program.myHero.Distance(minion.Position) * 1000 / 2000));
                     if (predHealth <= GetQDmg(minion))
@@ -582,6 +620,7 @@ namespace GosuMechanicsYasuo
         public static void Combo()
         {
             var TsTarget = TargetSelector.GetTarget(1300, TargetSelector.DamageType.Physical);
+            Orbwalker.ForceTarget(TsTarget);
 
             if (TsTarget == null)
             {
@@ -618,31 +657,72 @@ namespace GosuMechanicsYasuo
                 }
                 else if (Q.IsReady() && IsDashing && myHero.Distance(TsTarget) <= 275 * 275)
                 {
-                    PredictionOutput Qpred = Q.GetPrediction(TsTarget);
-                    Utility.DelayAction.Add(200, () => { Q.Cast(Qpred.CastPosition); } );
+                    Utility.DelayAction.Add(200, () => { CastQ12(TsTarget); } );
                 }
-                else if (Q3.IsReady() && IsDashing && myHero.Distance(TsTarget) <= 275 * 275)
+                else if (Q3.IsReady() && IsDashing && myHero.Distance(TsTarget) <= 275 * 275 && Q3READY())
                 {
-                    PredictionOutput Q3pred = Q3.GetPrediction(TsTarget);
-                    Utility.DelayAction.Add(200, () => { Q3.Cast(Q3pred.CastPosition); });
+                    Utility.DelayAction.Add(200, () => { CastQ3(TsTarget); });
+                }
+                //If you have Q3 up and enemy range < E range, priorize E+Q instead Q, or if will hit 2> enemyes with circle Q
+                else if (Q3.IsReady() && myHero.Distance(TsTarget) <= E.Range && Q3READY() && TsTarget != null)
+                {
+                    E.CastOnUnit(TsTarget, true);
+                    Utility.DelayAction.Add(200, () => { CastQ3(TsTarget); });
                 }
 
-                var bestMinion =
-                ObjectManager.Get<Obj_AI_Minion>()
+                if (Config.Item("E3").GetValue<bool>())
+                {
+                    var bestMinion =
+                    ObjectManager.Get<Obj_AI_Minion>()
                     .Where(x => x.IsValidTarget(E.Range))
                     .Where(x => x.Distance(TsTarget) < myHero.Distance(TsTarget))
                     .OrderByDescending(x => x.Distance(myHero))
                     .FirstOrDefault();
 
-                if (bestMinion != null && myHero.IsFacing(bestMinion) && TsTarget.Distance(myHero) >= (Config.Item("E2").GetValue<Slider>().Value) && CanCastE(bestMinion) && myHero.IsFacing(bestMinion))
-                {
-                    useENormal(bestMinion);
+                    if (bestMinion != null && myHero.IsFacing(bestMinion) && TsTarget.Distance(myHero) >= (Config.Item("E2").GetValue<Slider>().Value) && CanCastE(bestMinion) && myHero.IsFacing(bestMinion))
+                    {
+                        useENormal(bestMinion);
+                    }
+                    else if (bestMinion != null && myHero.IsFacing(bestMinion) && TsTarget.Distance(myHero) >= (Config.Item("E2").GetValue<Slider>().Value) && CanCastE(bestMinion) && myHero.IsFacing(bestMinion) && UnderTower(PosAfterE(bestMinion)) && Q.IsKillable(TsTarget) || E.IsKillable(TsTarget) || R.IsKillable(TsTarget))
+                    {
+                        E.CastOnUnit(bestMinion, true);
+                    }
                 }
-                else if (bestMinion != null && myHero.IsFacing(bestMinion) && TsTarget.Distance(myHero) >= (Config.Item("E2").GetValue<Slider>().Value) && CanCastE(bestMinion) && myHero.IsFacing(bestMinion) && UnderTower(PosAfterE(bestMinion)) && Q.IsKillable(TsTarget) || E.IsKillable(TsTarget) || R.IsKillable(TsTarget))
+                else if (!Config.Item("E3").GetValue<bool>())
                 {
-                    E.CastOnUnit(bestMinion, true);
+                    var bestMinion =
+                  ObjectManager.Get<Obj_AI_Base>()
+                      .Where(x => x.IsValidTarget(E.Range))
+                      .Where(x => x.Distance(Game.CursorPos) < ObjectManager.Player.Distance(Game.CursorPos))
+                      .OrderByDescending(x => x.Distance(myHero))
+                      .FirstOrDefault();
+
+                    if (bestMinion != null && myHero.IsFacing(bestMinion) && TsTarget.Distance(myHero) >= (Config.Item("E2").GetValue<Slider>().Value) && CanCastE(bestMinion) && myHero.IsFacing(bestMinion))
+                    {
+                        useENormal(bestMinion);
+                    }
+                    else if (bestMinion != null && myHero.IsFacing(bestMinion) && TsTarget.Distance(myHero) >= (Config.Item("E2").GetValue<Slider>().Value) && CanCastE(bestMinion) && myHero.IsFacing(bestMinion) && UnderTower(PosAfterE(bestMinion)) && Q.IsKillable(TsTarget) || E.IsKillable(TsTarget) || R.IsKillable(TsTarget))
+                    {
+                        E.CastOnUnit(bestMinion, true);
+                    }
                 }
             }
+            /*if (Config.Item("flash").GetValue<bool>() && E.IsReady() && R.IsReady() && Flash.IsReady())
+            {
+                if (TsTarget == null)
+                {
+                    return;
+                }
+                var flashQ3range = ((Flash.Range + E.Range) - 25);
+                if (Flash != null && TsTarget != null && myHero.Distance(TsTarget) <= flashQ3range && TsTarget.CountEnemiesInRange(400) >= Config.Item("flash2").GetValue<Slider>().Value 
+                    && myHero.CountAlliesInRange(1000) >= Config.Item("flash3").GetValue<Slider>().Value)
+                {
+                    myHero.Spellbook.CastSpell(Flash.Slot, TsTarget.ServerPosition);
+                    Utility.DelayAction.Add(10, () => { E.CastOnUnit(TsTarget, true); });
+                    Utility.DelayAction.Add(200, () => { CastQ3(TsTarget); });
+                }
+            }*/
+
             if (Program.R.IsReady() && Program.Config.Item("R").GetValue<bool>())
             {
                 List<Obj_AI_Hero> enemies = HeroManager.Enemies;
@@ -1015,7 +1095,7 @@ namespace GosuMechanicsYasuo
 
         public static void useEtoSafe(Skillshot skillShot)
         {
-            if (!E.IsReady())
+            if (!E.IsReady() || skillShotMenu.Item("DangerLevel" + skillShot.SpellData.MenuItemName) != null && Config.Item("smartEDogueDanger").GetValue<Slider>().Value < skillShotMenu.Item("DangerLevel" + skillShot.SpellData.MenuItemName).GetValue<Slider>().Value)
                 return;
             float closest = float.MaxValue;
             Obj_AI_Base closestTarg = null;
@@ -1036,7 +1116,7 @@ namespace GosuMechanicsYasuo
                     }
                 }
             }
-            if (closestTarg != null)
+            if (closestTarg != null && closestTarg.CountEnemiesInRange(600) <= 2)
                 useENormal(closestTarg);
         }
 
@@ -1058,11 +1138,11 @@ namespace GosuMechanicsYasuo
                     return;
 
                 //if only dangerous
-                if (Config.Item("wwDanger").GetValue<bool>() &&
-                    !skillShotIsDangerous(sd.MenuItemName))
+                if (Config.Item("wwDanger").GetValue<bool>() && !skillShotIsDangerous(sd.MenuItemName) 
+                    || skillShotMenu.Item("DangerLevel" + sd.MenuItemName) != null && Config.Item("smartWDanger").GetValue<Slider>().Value < skillShotMenu.Item("DangerLevel" + sd.MenuItemName).GetValue<Slider>().Value)
                     return;
 
-                Vector3 blockwhere = myHero.ServerPosition + Vector3.Normalize(skillShot.MissilePosition.To3D() - myHero.ServerPosition) * 10; // missle.Position; 
+                    Vector3 blockwhere = myHero.ServerPosition + Vector3.Normalize(skillShot.MissilePosition.To3D() - myHero.ServerPosition) * 10; // missle.Position; 
                 myHero.Spellbook.CastSpell(SpellSlot.W, skillShot.Start.To3D(), skillShot.Start.To3D());
             }
 
@@ -1181,7 +1261,6 @@ namespace GosuMechanicsYasuo
             }
             return true;
         }
-
         public static bool EvadeSpellEnabled(string Name)
         {
             if (skillShotMenu.Item("Enabled" + Name) != null)
