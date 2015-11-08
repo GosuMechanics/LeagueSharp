@@ -488,7 +488,7 @@ namespace GosuMechanicsYasuo
         public static void LaneClear()
         {
             List<Obj_AI_Base> Qminion = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, 1000, MinionTypes.All, MinionTeam.NotAlly);
-            foreach (var minion in Qminion.Where(minion => minion.IsValidTarget(E.Range) && enemyIsJumpable(minion)))
+            foreach (var minion in Qminion.Where(minion => minion.IsValidTarget(E.Range)))
             {
                 if (minion == null)
                 {
@@ -530,7 +530,7 @@ namespace GosuMechanicsYasuo
                 }
             }
             var allMinionsE = MinionManager.GetMinions(myHero.ServerPosition, E.Range, MinionTypes.All, MinionTeam.Enemy);
-            foreach (var minion in allMinionsE.Where(Program.CanCastE))
+            foreach (var minion in allMinionsE.Where(x => x.IsValidTarget(E.Range) && CanCastE(x)))
             {
                 if (minion == null)
                 {
@@ -551,6 +551,17 @@ namespace GosuMechanicsYasuo
                 if (Config.Item("LaneClearItems").GetValue<bool>())
                 {
                     UseItems(minion);
+                }
+            }
+            foreach (var jungleMobs in allMinionsE.Where(x => x.IsValidTarget(E.Range) && CanCastE(x) && x.Team == GameObjectTeam.Neutral))
+            {
+                if (jungleMobs == null)
+                {
+                    return;
+                }
+                if (Config.Item("LaneClearE").GetValue<bool>() && E.IsReady() && jungleMobs != null && jungleMobs.IsValidTarget(E.Range))
+                {
+                    E.CastOnUnit(jungleMobs);
                 }
             }
         }
@@ -659,14 +670,12 @@ namespace GosuMechanicsYasuo
                 {
                     Utility.DelayAction.Add(200, () => { CastQ12(TsTarget); } );
                 }
-                else if (Q3.IsReady() && IsDashing && myHero.Distance(TsTarget) <= 275 * 275 && Q3READY())
-                {
-                    Utility.DelayAction.Add(200, () => { CastQ3(TsTarget); });
-                }
-                //If you have Q3 up and enemy range < E range, priorize E+Q instead Q, or if will hit 2> enemyes with circle Q
-                else if (Q3.IsReady() && myHero.Distance(TsTarget) <= E.Range && Q3READY() && TsTarget != null)
+                if (Q3.IsReady() && myHero.Distance(TsTarget) <= E.Range && Q3READY() && TsTarget != null)
                 {
                     E.CastOnUnit(TsTarget, true);
+                }
+                else if (Q3.IsReady() && IsDashing && myHero.Distance(TsTarget) <= 275 * 275 && Q3READY())
+                {
                     Utility.DelayAction.Add(200, () => { CastQ3(TsTarget); });
                 }
 
