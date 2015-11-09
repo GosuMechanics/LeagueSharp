@@ -26,24 +26,7 @@ namespace GosuMechanicsYasuo
         public static bool isDashing;
         public static YasWall wall = new YasWall();
         public static Obj_AI_Hero myHero { get { return ObjectManager.Player; } }
-        public static float HealthPercent { get { return myHero.Health / myHero.MaxHealth * 100; } }
-
-        private static readonly Vector2 spot1 = new Vector2(7372, 5858);
-        private static readonly Vector2 spot2 = new Vector2(8222, 3158);
-        private static readonly Vector2 spot3 = new Vector2(3674, 7058);
-        private static readonly Vector2 spot4 = new Vector2(3788, 7422);
-        private static readonly Vector2 spot5 = new Vector2(8372, 9606);
-        private static readonly Vector2 spot6 = new Vector2(6650, 11766);
-        private static readonly Vector2 spot7 = new Vector2(1678, 8428);
-        private static readonly Vector2 spot8 = new Vector2(10822, 7456);
-        private static readonly Vector2 spot9 = new Vector2(11160, 7504);
-        private static readonly Vector2 spot10 = new Vector2(6424, 5208);
-        private static readonly Vector2 spot11 = new Vector2(13172, 6508);
-        private static readonly Vector2 spot12 = new Vector2(11222, 7856);
-        private static readonly Vector2 spot13 = new Vector2(10372, 8456);
-        private static readonly Vector2 spot14 = new Vector2(4324, 6258);
-        private static readonly Vector2 spot15 = new Vector2(6488, 11192);
-        private static readonly Vector2 spot16 = new Vector2(7672, 8906);
+        public static float HealthPercent { get { return myHero.Health / myHero.MaxHealth * 100; } }     
 
         public struct IsSafeResult
         {
@@ -174,7 +157,7 @@ namespace GosuMechanicsYasuo
             //Flee away
             Config.AddSubMenu(new Menu("Escape Settings", "Escape"));
             Config.SubMenu("Escape").AddItem(new MenuItem("flee", "Escape")).SetValue(new KeyBind('Z', KeyBindType.Press, false));
-            //Config.SubMenu("Escape").AddItem(new MenuItem("wall", "WallJump Escape")).SetValue(new KeyBind('V', KeyBindType.Press, false));
+            Config.SubMenu("Escape").AddItem(new MenuItem("wall", "WallJump Escape")).SetValue(new KeyBind('V', KeyBindType.Press, false));
             Config.SubMenu("Escape").AddItem(new MenuItem("AutoQ1", "Use Q Stack while Dashing")).SetValue(true);
             Config.SubMenu("Escape").AddItem(new MenuItem("AutoQToggle", "Auto Q Minion Toggle (Normal)")).SetValue(new KeyBind('K', KeyBindType.Toggle, true));
 
@@ -263,8 +246,12 @@ namespace GosuMechanicsYasuo
             if (Config.Item("flee").GetValue<KeyBind>().Active)
             {
                 Flee();
-                AutoQFlee();
+                AutoQFlee();               
                 myHero.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos);
+            }
+            if (Config.Item("wall").GetValue<KeyBind>().Active)
+            {
+                Yasuo.WallJump();
             }
             if (Config.Item("AutoQToggle").GetValue<KeyBind>().Active && Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.None && !Config.Item("flee").GetValue<KeyBind>().Active)
             {
@@ -291,7 +278,7 @@ namespace GosuMechanicsYasuo
             AutoR();
             KillSteal();
 
-            if (Config.Item("AutoQHarass").GetValue<KeyBind>().Active)
+            if (Config.Item("AutoQHarass").GetValue<KeyBind>().Active && Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.Combo)
             {
                 var TsTarget = TargetSelector.GetTarget(1000, TargetSelector.DamageType.Physical);
                 
@@ -1618,22 +1605,22 @@ namespace GosuMechanicsYasuo
             }
             if (Config.Item("DrawSpots").GetValue<bool>())
             {
-                Render.Circle.DrawCircle(spot1.To3D(), 70, Color.Red);
-                Render.Circle.DrawCircle(spot2.To3D(), 70, Color.Red);
-                Render.Circle.DrawCircle(spot3.To3D(), 70, Color.Red);
-                Render.Circle.DrawCircle(spot4.To3D(), 70, Color.Red);
-                Render.Circle.DrawCircle(spot5.To3D(), 70, Color.Red);
-                Render.Circle.DrawCircle(spot6.To3D(), 70, Color.Red);
-                Render.Circle.DrawCircle(spot7.To3D(), 70, Color.Red);
-                Render.Circle.DrawCircle(spot8.To3D(), 70, Color.Red);
-                Render.Circle.DrawCircle(spot9.To3D(), 70, Color.Red);
-                Render.Circle.DrawCircle(spot10.To3D(), 70, Color.Red);
-                Render.Circle.DrawCircle(spot11.To3D(), 70, Color.Red);
-                Render.Circle.DrawCircle(spot12.To3D(), 70, Color.Red);
-                Render.Circle.DrawCircle(spot13.To3D(), 70, Color.Red);
-                Render.Circle.DrawCircle(spot14.To3D(), 70, Color.Red);
-                Render.Circle.DrawCircle(spot15.To3D(), 70, Color.Red);
-                Render.Circle.DrawCircle(spot16.To3D(), 70, Color.Red);
+                Render.Circle.DrawCircle(Yasuo.spot1.To3D(), 70, Color.Red);
+                Render.Circle.DrawCircle(Yasuo.spot2.To3D(), 70, Color.Red);
+                Render.Circle.DrawCircle(Yasuo.spot3.To3D(), 70, Color.Red);
+                Render.Circle.DrawCircle(Yasuo.spot4.To3D(), 70, Color.Red);
+                Render.Circle.DrawCircle(Yasuo.spot5.To3D(), 70, Color.Red);
+                Render.Circle.DrawCircle(Yasuo.spot6.To3D(), 70, Color.Red);
+                Render.Circle.DrawCircle(Yasuo.spot7.To3D(), 70, Color.Red);
+                Render.Circle.DrawCircle(Yasuo.spot8.To3D(), 70, Color.Red);
+                Render.Circle.DrawCircle(Yasuo.spot9.To3D(), 70, Color.Red);
+                Render.Circle.DrawCircle(Yasuo.spot10.To3D(), 70, Color.Red);
+                Render.Circle.DrawCircle(Yasuo.spot11.To3D(), 70, Color.Red);
+                Render.Circle.DrawCircle(Yasuo.spot12.To3D(), 70, Color.Red);
+                Render.Circle.DrawCircle(Yasuo.spot13.To3D(), 70, Color.Red);
+                Render.Circle.DrawCircle(Yasuo.spot14.To3D(), 70, Color.Red);
+                Render.Circle.DrawCircle(Yasuo.spot15.To3D(), 70, Color.Red);
+                Render.Circle.DrawCircle(Yasuo.spot16.To3D(), 70, Color.Red);
             }
         }
     }

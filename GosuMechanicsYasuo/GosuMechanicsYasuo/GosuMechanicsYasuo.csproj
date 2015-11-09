@@ -95,6 +95,7 @@
     <Compile Include="SpellData.cs" />
     <Compile Include="SpellDatabase.cs" />
     <Compile Include="Utils.cs" />
+    <Compile Include="Yasuo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
