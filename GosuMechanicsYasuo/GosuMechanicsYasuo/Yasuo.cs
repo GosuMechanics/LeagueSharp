@@ -18,7 +18,7 @@ namespace GosuMechanicsYasuo
         public static Vector2 spot5 = new Vector2(8372, 9606);
         public static Vector2 spot6 = new Vector2(6650, 11766);
         public static Vector2 spot7 = new Vector2(1678, 8428);
-        public static Vector2 spot8 = new Vector2(10822, 7456);
+        public static Vector2 spot8 = new Vector2(10832, 7446);
         public static Vector2 spot9 = new Vector2(11160, 7504);
         public static Vector2 spot10 = new Vector2(6424, 5208);
         public static Vector2 spot11 = new Vector2(13172, 6508);
