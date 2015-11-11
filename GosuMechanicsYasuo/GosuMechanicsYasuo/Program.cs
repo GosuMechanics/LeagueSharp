@@ -301,6 +301,7 @@ namespace GosuMechanicsYasuo
             if (Config.Item("wall").GetValue<KeyBind>().Active)
             {
                 Yasuo.WallJump();
+                Yasuo.WallDash();
             }
             if (Config.Item("AutoQToggle").GetValue<KeyBind>().Active && Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.None && !Config.Item("flee").GetValue<KeyBind>().Active && !Config.Item("wall").GetValue<KeyBind>().Active)
             {
@@ -503,7 +504,7 @@ namespace GosuMechanicsYasuo
                     if (!UnderTower(PosAfterE(minion)) && CanCastE(minion))
                     {
                         var predHealth = HealthPrediction.GetHealthPrediction(minion, (int)(Program.myHero.Distance(minion.Position) * 1000 / 2000));
-                        if (predHealth <= GetEDmg(minion))
+                        if (predHealth <= GetEDmg(minion) && !isDangerous(minion, 600))
                         {
                             E.CastOnUnit(minion, true);
                         }
@@ -581,8 +582,9 @@ namespace GosuMechanicsYasuo
                 {
                     if (!UnderTower(PosAfterE(minion)))
                     {
+
                         var predHealth = HealthPrediction.LaneClearHealthPrediction(minion, (int)(Program.myHero.Distance(minion.Position) * 1000 / 2000));
-                        if (predHealth <= GetEDmg(minion))
+                        if (predHealth <= GetEDmg(minion) && !isDangerous(minion, 600))
                         {
                             E.CastOnUnit(minion, true);
                         }
@@ -801,13 +803,13 @@ namespace GosuMechanicsYasuo
                     }
                     if (enemy.IsValidTarget(Program.R.Range))
                     {
-                        if (Program.IsKnockedUp(enemy) && Program.CanCastDelayR(enemy) && (enemy.Health / enemy.MaxHealth * 100) <= (Program.Config.Item("R1").GetValue<Slider>().Value) && Config.Item(TsTarget.ChampionName).GetValue<bool>())
+                        if (Program.IsKnockedUp(enemy) && Program.CanCastDelayR(enemy) && (enemy.Health / enemy.MaxHealth * 100) <= (Program.Config.Item("R1").GetValue<Slider>().Value) && Config.Item(enemy.ChampionName).GetValue<bool>())
                         {
                             Program.R.Cast();
                         }
                         else if (Program.IsKnockedUp(enemy) && Program.CanCastDelayR(enemy) && (enemy.Health / enemy.MaxHealth * 100) >= (Program.Config.Item("R1").GetValue<Slider>().Value) && (Program.Config.Item("R3").GetValue<bool>()))
                         {
-                            if (Program.AlliesNearTarget(TsTarget, 600))
+                            if (Program.AlliesNearTarget(enemy, 600))
                             {
                                 Program.R.Cast();
                             }
@@ -831,12 +833,20 @@ namespace GosuMechanicsYasuo
             {
                 if (enemy.IsValidTarget(Q.Range) && Config.Item("KS").GetValue<bool>())
                 {
-                    if (Q.IsReady())
+                    if (Q.IsReady() && !Q3READY())
                     {
                         
                         if (enemy.Health <= GetQDmg(enemy))
                         {
-                            Q.Cast(enemy.ServerPosition, true);
+                            CastQ12(enemy);
+                        }
+                    }
+                    if (Q3.IsReady() && Q3READY())
+                    {
+
+                        if (enemy.Health <= GetQDmg(enemy))
+                        {
+                            CastQ3(enemy);
                         }
                     }
                     if (!Q.IsReady() && E.IsReady() && CanCastE(enemy))
@@ -891,6 +901,10 @@ namespace GosuMechanicsYasuo
         {
             return HeroManager.Allies.Where(tar => tar.Distance(target) < range).Any(tar => tar != null);
         }
+        public static bool isDangerous(Obj_AI_Base target, float range)
+        {
+            return HeroManager.Enemies.Where(tar => tar.Distance(PosAfterE(target)) < range).Any(tar => tar != null);
+        }
 
         private static bool CanCastDelayR(Obj_AI_Hero target)
         {
@@ -928,7 +942,7 @@ namespace GosuMechanicsYasuo
         {
             var stacksPassive = myHero.Buffs.Find(b => b.DisplayName.Equals("YasuoDashScalar"));
             var stacks = 1 + 0.25 * ((stacksPassive != null) ? stacksPassive.Count : 0);
-            var damage = ((50 + 20 * E.Level) * stacks) + (myHero.FlatMagicDamageMod * 0.6);
+            var damage = ((E.Level * 20) + 50) * stacks + (myHero.FlatMagicDamageMod * 0.6);
             return myHero.CalcDamage(target, Damage.DamageType.Magical, damage);
         }
         public static Vector2 getNextPos(Obj_AI_Hero target)
@@ -1686,22 +1700,22 @@ namespace GosuMechanicsYasuo
             }
             if (Config.Item("DrawSpots").GetValue<bool>())
             {
-                Render.Circle.DrawCircle(Yasuo.spot1.To3D(), 70, Color.Red);
-                Render.Circle.DrawCircle(Yasuo.spot2.To3D(), 70, Color.Red);
-                Render.Circle.DrawCircle(Yasuo.spot3.To3D(), 70, Color.Red);
-                Render.Circle.DrawCircle(Yasuo.spot4.To3D(), 70, Color.Red);
-                Render.Circle.DrawCircle(Yasuo.spot5.To3D(), 70, Color.Red);
-                Render.Circle.DrawCircle(Yasuo.spot6.To3D(), 70, Color.Red);
-                Render.Circle.DrawCircle(Yasuo.spot7.To3D(), 70, Color.Red);
-                Render.Circle.DrawCircle(Yasuo.spot8.To3D(), 70, Color.Red);
-                Render.Circle.DrawCircle(Yasuo.spot9.To3D(), 70, Color.Red);
-                Render.Circle.DrawCircle(Yasuo.spot10.To3D(), 70, Color.Red);
-                Render.Circle.DrawCircle(Yasuo.spot11.To3D(), 70, Color.Red);
-                Render.Circle.DrawCircle(Yasuo.spot12.To3D(), 70, Color.Red);
-                Render.Circle.DrawCircle(Yasuo.spot13.To3D(), 70, Color.Red);
-                Render.Circle.DrawCircle(Yasuo.spot14.To3D(), 70, Color.Red);
-                Render.Circle.DrawCircle(Yasuo.spot15.To3D(), 70, Color.Red);
-                Render.Circle.DrawCircle(Yasuo.spot16.To3D(), 70, Color.Red);
+                Render.Circle.DrawCircle(Yasuo.spot1.To3D(), 150, Color.Red, 2);
+                Render.Circle.DrawCircle(Yasuo.spot2.To3D(), 150, Color.Red, 2);
+                Render.Circle.DrawCircle(Yasuo.spot3.To3D(), 150, Color.Red, 2);
+                Render.Circle.DrawCircle(Yasuo.spot4.To3D(), 150, Color.Red, 2);
+                Render.Circle.DrawCircle(Yasuo.spot5.To3D(), 150, Color.Red, 2);
+                Render.Circle.DrawCircle(Yasuo.spot6.To3D(), 150, Color.Red, 2);
+                Render.Circle.DrawCircle(Yasuo.spot7.To3D(), 150, Color.Red, 2);
+                Render.Circle.DrawCircle(Yasuo.spot8.To3D(), 150, Color.Red, 2);
+                Render.Circle.DrawCircle(Yasuo.spot9.To3D(), 150, Color.Red, 2);
+                Render.Circle.DrawCircle(Yasuo.spot10.To3D(), 150, Color.Red, 2);
+                Render.Circle.DrawCircle(Yasuo.spot11.To3D(), 150, Color.Red, 2);
+                Render.Circle.DrawCircle(Yasuo.spot12.To3D(), 150, Color.Red, 2);
+                Render.Circle.DrawCircle(Yasuo.spot13.To3D(), 150, Color.Red, 2);
+                Render.Circle.DrawCircle(Yasuo.spot14.To3D(), 150, Color.Red, 2);
+                Render.Circle.DrawCircle(Yasuo.spot15.To3D(), 150, Color.Red, 2);
+                Render.Circle.DrawCircle(Yasuo.spot16.To3D(), 150, Color.Red, 2);
             }
         }
     }

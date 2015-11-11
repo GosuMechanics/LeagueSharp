@@ -11,7 +11,7 @@ namespace GosuMechanicsYasuo
 {
     class Yasuo
     {
-        public static Vector2 spot1 = new Vector2(7372, 5858);
+        public static Vector2 spot1 = new Vector2(7274, 5908);
         public static Vector2 spot2 = new Vector2(8222, 3158);
         public static Vector2 spot3 = new Vector2(3674, 7058);
         public static Vector2 spot4 = new Vector2(3788, 7422);
@@ -27,16 +27,17 @@ namespace GosuMechanicsYasuo
         public static Vector2 spot14 = new Vector2(4324, 6258);
         public static Vector2 spot15 = new Vector2(6488, 11192);
         public static Vector2 spot16 = new Vector2(7672, 8906);
+
+        public static Vector2 spotA = new Vector2(10922, 6908);
+        public static Vector2 spotB = new Vector2(7616, 4074);
+
         public static float LastMoveC;
         public static void WallJump()
         {
             if (Program.myHero.Distance(spot1) <= 150)
             {
-                MoveToLimited(spot1.To3D());
-                if (Program.myHero.ServerPosition.Equals(spot1.To3D()) && Program.W.IsReady())
-                {
-                    Program.W.Cast(new Vector2(7110, 5612).To3D(), true);
-                }
+                MoveToLimited(spot1.To3D());          
+                    
                 var jminions = MinionManager.GetMinions(Program.myHero.ServerPosition, Program.E.Range, MinionTypes.All, MinionTeam.Neutral);
                 foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.Q3.Range)))
                 {
@@ -49,14 +50,15 @@ namespace GosuMechanicsYasuo
                         Program.E.CastOnUnit(jungleMobs);
                     }
                 }
+                if (Program.myHero.ServerPosition.Equals(spot1.To3D()) && Program.W.IsReady())
+                {
+                    Program.W.Cast(new Vector2(7110, 5612).To3D(), true);
+                }
             }
             if (Program.myHero.Distance(spot2) <= 150)
             {
                 MoveToLimited(spot2.To3D());
-                if (Program.myHero.ServerPosition.Equals(spot2.To3D()) && Program.W.IsReady())
-                {
-                    Program.W.Cast(new Vector2(8372, 2908).To3D(), true);
-                }
+                
                 var jminions = MinionManager.GetMinions(Program.myHero.ServerPosition, Program.E.Range, MinionTypes.All, MinionTeam.Neutral);
                 foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.Q3.Range)))
                 {
@@ -69,14 +71,15 @@ namespace GosuMechanicsYasuo
                         Program.E.CastOnUnit(jungleMobs);
                     }
                 }
+                if (Program.myHero.ServerPosition.Equals(spot2.To3D()) && Program.W.IsReady())
+                {
+                    Program.W.Cast(new Vector2(8372, 2908).To3D(), true);
+                }
             }
             if (Program.myHero.Distance(spot3) <= 150)
             {
                 MoveToLimited(spot3.To3D());
-                if (Program.myHero.ServerPosition.Equals(spot3.To3D()) && Program.W.IsReady())
-                {
-                    Program.W.Cast(new Vector2(3674, 6708).To3D(), true);
-                }
+                
                 var jminions = MinionManager.GetMinions(Program.myHero.ServerPosition, Program.E.Range, MinionTypes.All, MinionTeam.Neutral);
                 foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.Q3.Range)))
                 {
@@ -89,14 +92,15 @@ namespace GosuMechanicsYasuo
                         Program.E.CastOnUnit(jungleMobs);
                     }
                 }
+                if (Program.myHero.ServerPosition.Equals(spot3.To3D()) && Program.W.IsReady())
+                {
+                    Program.W.Cast(new Vector2(3674, 6708).To3D(), true);
+                }
             }
             if (Program.myHero.Distance(spot4) <= 150)
             {
                 MoveToLimited(spot4.To3D());
-                if (Program.myHero.ServerPosition.Equals(spot4.To3D()) && Program.W.IsReady())
-                {
-                    Program.W.Cast(new Vector2(3774, 7706).To3D(), true);
-                }
+                
                 var jminions = MinionManager.GetMinions(Program.myHero.ServerPosition, Program.E.Range, MinionTypes.All, MinionTeam.Neutral);
                 foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.Q3.Range)))
                 {
@@ -109,14 +113,15 @@ namespace GosuMechanicsYasuo
                         Program.E.CastOnUnit(jungleMobs);
                     }
                 }
+                if (Program.myHero.ServerPosition.Equals(spot4.To3D()) && Program.W.IsReady())
+                {
+                    Program.W.Cast(new Vector2(3774, 7706).To3D(), true);
+                }
             }
             if (Program.myHero.Distance(spot5) <= 150)
             {
                 MoveToLimited(spot5.To3D());
-                if (Program.myHero.ServerPosition.Equals(spot5.To3D()) && Program.W.IsReady())
-                {
-                    Program.W.Cast(new Vector2(7923, 9351).To3D(), true);
-                }
+                
                 var jminions = MinionManager.GetMinions(Program.myHero.ServerPosition, Program.E.Range, MinionTypes.All, MinionTeam.Neutral);
                 foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.Q3.Range)))
                 {
@@ -128,6 +133,10 @@ namespace GosuMechanicsYasuo
                     {
                         Program.E.CastOnUnit(jungleMobs);
                     }
+                }
+                if (Program.myHero.ServerPosition.Equals(spot5.To3D()) && Program.W.IsReady())
+                {
+                    Program.W.Cast(new Vector2(7923, 9351).To3D(), true);
                 }
             }
             if (Program.myHero.Distance(spot6) <= 150)
@@ -149,14 +158,15 @@ namespace GosuMechanicsYasuo
                         Program.E.CastOnUnit(jungleMobs);
                     }
                 }
+                if (Program.myHero.ServerPosition.Equals(spot6.To3D()) && Program.W.IsReady())
+                {
+                    Program.W.Cast(new Vector2(6426, 12138).To3D(), true);
+                }
             }
             if (Program.myHero.Distance(spot7) <= 150)
             {
                 MoveToLimited(spot7.To3D());
-                if (Program.myHero.ServerPosition.Equals(spot7.To3D()) && Program.W.IsReady())
-                {
-                    Program.W.Cast(new Vector2(2050, 8416).To3D(), true);
-                }
+                
                 var jminions = MinionManager.GetMinions(Program.myHero.ServerPosition, Program.E.Range, MinionTypes.All, MinionTeam.Neutral);
                 foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.Q3.Range)))
                 {
@@ -169,14 +179,15 @@ namespace GosuMechanicsYasuo
                         Program.E.CastOnUnit(jungleMobs);
                     }
                 }
+                if (Program.myHero.ServerPosition.Equals(spot7.To3D()) && Program.W.IsReady())
+                {
+                    Program.W.Cast(new Vector2(2050, 8416).To3D(), true);
+                }
             }
             if (Program.myHero.Distance(spot8) <= 150)
             {
                 MoveToLimited(spot8.To3D());
-                if (Program.myHero.ServerPosition.Equals(spot8.To3D()) && Program.W.IsReady())
-                {
-                    Program.W.Cast(new Vector2(10894, 7192).To3D(), true);
-                }
+                
                 var jminions = MinionManager.GetMinions(Program.myHero.ServerPosition, Program.E.Range, MinionTypes.All, MinionTeam.Neutral);
                 foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.Q3.Range)))
                 {
@@ -189,14 +200,15 @@ namespace GosuMechanicsYasuo
                         Program.E.CastOnUnit(jungleMobs);
                     }
                 }
+                if (Program.myHero.ServerPosition.Equals(spot8.To3D()) && Program.W.IsReady())
+                {
+                    Program.W.Cast(new Vector2(10894, 7192).To3D(), true);
+                }
             }
             if (Program.myHero.Distance(spot9) <= 150)
             {
                 MoveToLimited(spot9.To3D());
-                if (Program.myHero.ServerPosition.Equals(spot9.To3D()) && Program.W.IsReady())
-                {
-                    Program.W.Cast(new Vector2(11172, 7208).To3D(), true);
-                }
+                
                 var jminions = MinionManager.GetMinions(Program.myHero.ServerPosition, Program.E.Range, MinionTypes.All, MinionTeam.Neutral);
                 foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.Q3.Range)))
                 {
@@ -209,14 +221,15 @@ namespace GosuMechanicsYasuo
                         Program.E.CastOnUnit(jungleMobs);
                     }
                 }
+                if (Program.myHero.ServerPosition.Equals(spot9.To3D()) && Program.W.IsReady())
+                {
+                    Program.W.Cast(new Vector2(11172, 7208).To3D(), true);
+                }
             }
             if (Program.myHero.Distance(spot10) <= 150)
             {
                 MoveToLimited(spot10.To3D());
-                if (Program.myHero.ServerPosition.Equals(spot10.To3D()) && Program.W.IsReady())
-                {
-                    Program.W.Cast(new Vector2(6824, 5308).To3D(), true);
-                }
+                
                 var jminions = MinionManager.GetMinions(Program.myHero.ServerPosition, Program.E.Range, MinionTypes.All, MinionTeam.Neutral);
                 foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.Q3.Range)))
                 {
@@ -229,14 +242,15 @@ namespace GosuMechanicsYasuo
                         Program.E.CastOnUnit(jungleMobs);
                     }
                 }
+                if (Program.myHero.ServerPosition.Equals(spot10.To3D()) && Program.W.IsReady())
+                {
+                    Program.W.Cast(new Vector2(6824, 5308).To3D(), true);
+                }
             }
             if (Program.myHero.Distance(spot11) <= 150)
             {
                 MoveToLimited(spot11.To3D());
-                if (Program.myHero.ServerPosition.Equals(spot11.To3D()) && Program.W.IsReady())
-                {
-                    Program.W.Cast(new Vector2(12772, 6458).To3D(), true);
-                }
+                
                 var jminions = MinionManager.GetMinions(Program.myHero.ServerPosition, Program.E.Range, MinionTypes.All, MinionTeam.Neutral);
                 foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.Q3.Range)))
                 {
@@ -249,14 +263,15 @@ namespace GosuMechanicsYasuo
                         Program.E.CastOnUnit(jungleMobs);
                     }
                 }
+                if (Program.myHero.ServerPosition.Equals(spot11.To3D()) && Program.W.IsReady())
+                {
+                    Program.W.Cast(new Vector2(12772, 6458).To3D(), true);
+                }
             }
             if (Program.myHero.Distance(spot12) <= 150)
             {
                 MoveToLimited(spot12.To3D());
-                if (Program.myHero.ServerPosition.Equals(spot12.To3D()) && Program.W.IsReady())
-                {
-                    Program.W.Cast(new Vector2(11072, 8156).To3D(), true);
-                }
+                
                 var jminions = MinionManager.GetMinions(Program.myHero.ServerPosition, Program.E.Range, MinionTypes.All, MinionTeam.Neutral);
                 foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.Q3.Range)))
                 {
@@ -269,14 +284,15 @@ namespace GosuMechanicsYasuo
                         Program.E.CastOnUnit(jungleMobs);
                     }
                 }
+                if (Program.myHero.ServerPosition.Equals(spot12.To3D()) && Program.W.IsReady())
+                {
+                    Program.W.Cast(new Vector2(11072, 8156).To3D(), true);
+                }
             }
             if (Program.myHero.Distance(spot13) <= 150)
             {
                 MoveToLimited(spot13.To3D());
-                if (Program.myHero.ServerPosition.Equals(spot13.To3D()) && Program.W.IsReady())
-                {
-                    Program.W.Cast(new Vector2(10772, 8456).To3D(), true);
-                }
+                
                 var jminions = MinionManager.GetMinions(Program.myHero.ServerPosition, Program.E.Range, MinionTypes.All, MinionTeam.Neutral);
                 foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.Q3.Range)))
                 {
@@ -289,14 +305,15 @@ namespace GosuMechanicsYasuo
                         Program.E.CastOnUnit(jungleMobs);
                     }
                 }
+                if (Program.myHero.ServerPosition.Equals(spot13.To3D()) && Program.W.IsReady())
+                {
+                    Program.W.Cast(new Vector2(10772, 8456).To3D(), true);
+                }
             }
             if (Program.myHero.Distance(spot14) <= 150)
             {
                 MoveToLimited(spot14.To3D());
-                if (Program.myHero.ServerPosition.Equals(spot14.To3D()) && Program.W.IsReady())
-                {
-                    Program.W.Cast(new Vector2(4024, 6358).To3D(), true);
-                }
+                
                 var jminions = MinionManager.GetMinions(Program.myHero.ServerPosition, Program.E.Range, MinionTypes.All, MinionTeam.Neutral);
                 foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.Q3.Range)))
                 {
@@ -309,14 +326,15 @@ namespace GosuMechanicsYasuo
                         Program.E.CastOnUnit(jungleMobs);
                     }
                 }
+                if (Program.myHero.ServerPosition.Equals(spot14.To3D()) && Program.W.IsReady())
+                {
+                    Program.W.Cast(new Vector2(4024, 6358).To3D(), true);
+                }
             }
             if (Program.myHero.Distance(spot15) <= 150)
             {
                 MoveToLimited(spot15.To3D());
-                if (Program.myHero.ServerPosition.Equals(spot15.To3D()) && Program.W.IsReady())
-                {
-                    Program.W.Cast(new Vector2(66986, 10910).To3D(), true);
-                }
+                
                 var jminions = MinionManager.GetMinions(Program.myHero.ServerPosition, Program.E.Range, MinionTypes.All, MinionTeam.Neutral);
                 foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.Q3.Range)))
                 {
@@ -329,14 +347,15 @@ namespace GosuMechanicsYasuo
                         Program.E.CastOnUnit(jungleMobs);
                     }
                 }
+                if (Program.myHero.ServerPosition.Equals(spot15.To3D()) && Program.W.IsReady())
+                {
+                    Program.W.Cast(new Vector2(66986, 10910).To3D(), true);
+                }
             }
             if (Program.myHero.Distance(spot16) <= 150)
             {
                 MoveToLimited(spot16.To3D());
-                if (Program.myHero.ServerPosition.Equals(spot16.To3D()) && Program.W.IsReady())
-                {
-                    Program.W.Cast(new Vector2(7822, 9306).To3D(), true);
-                }
+                
                 var jminions = MinionManager.GetMinions(Program.myHero.ServerPosition, Program.E.Range, MinionTypes.All, MinionTeam.Neutral);
                 foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.Q3.Range)))
                 {
@@ -349,7 +368,35 @@ namespace GosuMechanicsYasuo
                         Program.E.CastOnUnit(jungleMobs);
                     }
                 }
+                if (Program.myHero.ServerPosition.Equals(spot16.To3D()) && Program.W.IsReady())
+                {
+                    Program.W.Cast(new Vector2(7822, 9306).To3D(), true);
+                }
             }
+        }
+
+        public static void WallDash()
+        {
+            if (Program.myHero.Distance(spotA) <= 600)
+            {
+                MoveToLimited(spotA.To3D());
+
+                var jminions =
+                         ObjectManager.Get<Obj_AI_Minion>()
+                             .Where(
+                                 mob =>
+                                 mob.IsValidTarget() && mob.Team == GameObjectTeam.Neutral).MaxOrDefault(mob => mob.MaxHealth);
+                {
+                    if (jminions == null)
+                    {
+                        return;
+                    }
+                    if (Program.myHero.ServerPosition.Equals(spotA.To3D()) && jminions.IsVisible && Program.E.IsReady() && jminions != null && Program.CanCastE(jminions))
+                    {
+                        Program.E.CastOnUnit(jminions);
+                    }
+                }
+            }         
         }
         private static void MoveToLimited(Vector3 where)
         {
