@@ -30,6 +30,14 @@ namespace GosuMechanicsYasuo
 
         public static Vector2 spotA = new Vector2(10922, 6908);
         public static Vector2 spotB = new Vector2(7616, 4074);
+        public static Vector2 spotC = new Vector2(2232, 8412);
+        public static Vector2 spotD = new Vector2(7046, 5426);
+        public static Vector2 spotE = new Vector2(8322, 2658);
+        public static Vector2 spotF = new Vector2(3676, 7968);
+        public static Vector2 spotG = new Vector2(3892, 6466);
+        public static Vector2 spotH = new Vector2(12582, 6402);
+        public static Vector2 spotI = new Vector2(11072, 8306);
+        public static Vector2 spotJ = new Vector2(10882, 8416);
 
         public static float LastMoveC;
         public static void WallJump()
@@ -381,22 +389,172 @@ namespace GosuMechanicsYasuo
             {
                 MoveToLimited(spotA.To3D());
 
-                var jminions =
-                         ObjectManager.Get<Obj_AI_Minion>()
-                             .Where(
-                                 mob =>
-                                 mob.IsValidTarget() && mob.Team == GameObjectTeam.Neutral).MaxOrDefault(mob => mob.MaxHealth);
+                var jminions = MinionManager.GetMinions(Program.myHero.ServerPosition, Program.E.Range, MinionTypes.All, MinionTeam.Neutral);
+                foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.E.Range)))
                 {
-                    if (jminions == null)
+                    if (jungleMobs == null)
                     {
                         return;
                     }
-                    if (Program.myHero.ServerPosition.Equals(spotA.To3D()) && jminions.IsVisible && Program.E.IsReady() && jminions != null && Program.CanCastE(jminions))
+                    if (Program.myHero.ServerPosition.Equals(spotA.To3D()) && jungleMobs.NetworkId.Equals(1073742199) && jungleMobs.IsVisible && Program.E.IsReady() && jungleMobs != null && jungleMobs.IsValidTarget(Program.E.Range) && Program.CanCastE(jungleMobs))
                     {
-                        Program.E.CastOnUnit(jminions);
+                        Program.E.CastOnUnit(jungleMobs);
                     }
                 }
-            }         
+            }
+            if (Program.myHero.Distance(spotB) <= 600)
+            {
+                MoveToLimited(spotB.To3D());
+
+                var jminions = MinionManager.GetMinions(Program.myHero.ServerPosition, Program.E.Range, MinionTypes.All, MinionTeam.Neutral);
+                foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.E.Range)))
+                {
+                    if (jungleMobs == null)
+                    {
+                        return;
+                    }
+                    if (Program.myHero.ServerPosition.Equals(spotB.To3D()) && jungleMobs.NetworkId.Equals(1073742182) && jungleMobs.IsVisible && Program.E.IsReady() && jungleMobs != null && jungleMobs.IsValidTarget(Program.E.Range) && Program.CanCastE(jungleMobs))
+                    {
+                        Program.E.CastOnUnit(jungleMobs);
+                    }
+                }
+            }
+            if (Program.myHero.Distance(spotC) <= 600)
+            {
+                MoveToLimited(spotC.To3D());
+
+                var jminions = MinionManager.GetMinions(Program.myHero.ServerPosition, Program.E.Range, MinionTypes.All, MinionTeam.Neutral);
+                foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.E.Range)))
+                {
+                    if (jungleMobs == null)
+                    {
+                        return;
+                    }
+                    if (Program.myHero.ServerPosition.Equals(spotC.To3D()) && jungleMobs.IsVisible && Program.E.IsReady() && jungleMobs != null && jungleMobs.IsValidTarget(Program.E.Range) && Program.CanCastE(jungleMobs))
+                    {
+                        Program.E.CastOnUnit(jungleMobs);
+                    }
+                }
+            }
+            if (Program.myHero.Distance(spotD) <= 600)
+            {
+                MoveToLimited(spotD.To3D());
+
+                var jminions = MinionManager.GetMinions(Program.myHero.ServerPosition, Program.E.Range, MinionTypes.All, MinionTeam.Neutral);
+                foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.E.Range)))
+                {
+                    if (jungleMobs == null)
+                    {
+                        return;
+                    }
+                    if (Program.myHero.ServerPosition.Equals(spotD.To3D()) && jungleMobs.NetworkId.Equals(1073742209) && jungleMobs.IsVisible && Program.E.IsReady() && jungleMobs != null && jungleMobs.IsValidTarget(Program.E.Range) && Program.CanCastE(jungleMobs))
+                    {
+                        Program.E.CastOnUnit(jungleMobs);
+                    }
+                }
+            }
+            if (Program.myHero.Distance(spotE) <= 600)
+            {
+                MoveToLimited(spotE.To3D());
+
+                var jminions = MinionManager.GetMinions(Program.myHero.ServerPosition, Program.E.Range, MinionTypes.All, MinionTeam.Neutral);
+                foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.E.Range)))
+                {
+                    if (jungleMobs == null)
+                    {
+                        return;
+                    }
+                    if (Program.myHero.ServerPosition.Equals(spotE.To3D()) && jungleMobs.NetworkId.Equals(1073742213) && jungleMobs.IsVisible && Program.E.IsReady() && jungleMobs != null && jungleMobs.IsValidTarget(Program.E.Range) && Program.CanCastE(jungleMobs))
+                    {
+                        Program.E.CastOnUnit(jungleMobs);
+                    }
+                }
+            }
+            if (Program.myHero.Distance(spotF) <= 600)
+            {
+                MoveToLimited(spotF.To3D());
+
+                var jminions = MinionManager.GetMinions(Program.myHero.ServerPosition, Program.E.Range, MinionTypes.All, MinionTeam.Neutral);
+                foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.E.Range)))
+                {
+                    if (jungleMobs == null)
+                    {
+                        return;
+                    }
+                    if (Program.myHero.ServerPosition.Equals(spotF.To3D()) && jungleMobs.NetworkId.Equals(1073742197) && jungleMobs.IsVisible && Program.E.IsReady() && jungleMobs != null && jungleMobs.IsValidTarget(Program.E.Range) && Program.CanCastE(jungleMobs))
+                    {
+                        Program.E.CastOnUnit(jungleMobs);
+                    }
+                }
+            }
+            if (Program.myHero.Distance(spotG) <= 600)
+            {
+                MoveToLimited(spotG.To3D());
+
+                var jminions = MinionManager.GetMinions(Program.myHero.ServerPosition, Program.E.Range, MinionTypes.All, MinionTeam.Neutral);
+                foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.E.Range)))
+                {
+                    if (jungleMobs == null)
+                    {
+                        return;
+                    }
+                    if (Program.myHero.ServerPosition.Equals(spotG.To3D()) && jungleMobs.NetworkId.Equals(1073742225) && jungleMobs.IsVisible && Program.E.IsReady() && jungleMobs != null && jungleMobs.IsValidTarget(Program.E.Range) && Program.CanCastE(jungleMobs))
+                    {
+                        Program.E.CastOnUnit(jungleMobs);
+                    }
+                }
+            }
+            if (Program.myHero.Distance(spotH) <= 600)
+            {
+                MoveToLimited(spotH.To3D());
+
+                var jminions = MinionManager.GetMinions(Program.myHero.ServerPosition, Program.E.Range, MinionTypes.All, MinionTeam.Neutral);
+                foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.E.Range)))
+                {
+                    if (jungleMobs == null)
+                    {
+                        return;
+                    }
+                    if (Program.myHero.ServerPosition.Equals(spotH.To3D()) && jungleMobs.IsVisible && Program.E.IsReady() && jungleMobs != null && jungleMobs.IsValidTarget(Program.E.Range) && Program.CanCastE(jungleMobs))
+                    {
+                        Program.E.CastOnUnit(jungleMobs);
+                    }
+                }
+            }
+            if (Program.myHero.Distance(spotI) <= 250)
+            {
+                MoveToLimited(spotI.To3D());
+
+                var jminions = MinionManager.GetMinions(Program.myHero.ServerPosition, Program.E.Range, MinionTypes.All, MinionTeam.Neutral);
+                foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.E.Range)))
+                {
+                    if (jungleMobs == null)
+                    {
+                        return;
+                    }
+                    if (Program.myHero.ServerPosition.Equals(spotI.To3D()) && jungleMobs.NetworkId.Equals(1073742231) && jungleMobs.IsVisible && Program.E.IsReady() && jungleMobs != null && jungleMobs.IsValidTarget(Program.E.Range) && Program.CanCastE(jungleMobs))
+                    {
+                        Program.E.CastOnUnit(jungleMobs);
+                    }
+                }
+            }
+            if (Program.myHero.Distance(spotJ) <= 250)
+            {
+                MoveToLimited(spotJ.To3D());
+
+                var jminions = MinionManager.GetMinions(Program.myHero.ServerPosition, Program.E.Range, MinionTypes.All, MinionTeam.Neutral);
+                foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.E.Range)))
+                {
+                    if (jungleMobs == null)
+                    {
+                        return;
+                    }
+                    if (Program.myHero.ServerPosition.Equals(spotJ.To3D()) && jungleMobs.NetworkId.Equals(1073742233) && jungleMobs.IsVisible && Program.E.IsReady() && jungleMobs != null && jungleMobs.IsValidTarget(Program.E.Range) && Program.CanCastE(jungleMobs))
+                    {
+                        Program.E.CastOnUnit(jungleMobs);
+                    }
+                }
+            }
         }
         private static void MoveToLimited(Vector3 where)
         {
