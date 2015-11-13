@@ -505,7 +505,7 @@ namespace GosuMechanicsYasuo
         }
         public static void LaneClear()
         {
-            List<Obj_AI_Base> Qminion = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, 1000, MinionTypes.All, MinionTeam.NotAlly);
+            List<Obj_AI_Base> Qminion = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, 1000, MinionTypes.All, MinionTeam.Enemy);
             foreach (var minion in Qminion.Where(minion => minion.IsValidTarget(Q3.Range)))
             {
                 if (minion == null)
