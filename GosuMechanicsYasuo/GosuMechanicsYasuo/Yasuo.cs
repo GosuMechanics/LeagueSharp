@@ -38,6 +38,11 @@ namespace GosuMechanicsYasuo
         public static Vector2 spotH = new Vector2(12582, 6402);
         public static Vector2 spotI = new Vector2(11072, 8306);
         public static Vector2 spotJ = new Vector2(10882, 8416);
+        public static Vector2 spotK = new Vector2(3730, 8080);
+        public static Vector2 spotL = new Vector2(6574, 12256);
+        public static Vector2 spotM = new Vector2(7244, 10890);
+        public static Vector2 spotN = new Vector2(7784, 9494);
+        public static Vector2 spotO = new Vector2(6984, 10980);
 
         public static float LastMoveC;
         public static void WallJump()
@@ -390,13 +395,13 @@ namespace GosuMechanicsYasuo
                 MoveToLimited(spotA.To3D());
 
                 var jminions = MinionManager.GetMinions(Program.myHero.ServerPosition, Program.E.Range, MinionTypes.All, MinionTeam.Neutral);
-                foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.E.Range)))
+                foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.myHero.AttackRange)))
                 {
                     if (jungleMobs == null)
                     {
                         return;
                     }
-                    if (Program.myHero.ServerPosition.Equals(spotA.To3D()) && jungleMobs.NetworkId.Equals(1073742199) && jungleMobs.IsVisible && Program.E.IsReady() && jungleMobs != null && jungleMobs.IsValidTarget(Program.E.Range) && Program.CanCastE(jungleMobs))
+                    if (Program.myHero.ServerPosition.Equals(spotA.To3D()) && jungleMobs.CharData.BaseSkinName == "SRU_Blue" && jungleMobs.IsVisible && Program.E.IsReady() && jungleMobs != null && jungleMobs.IsValidTarget(Program.E.Range) && Program.CanCastE(jungleMobs))
                     {
                         Program.E.CastOnUnit(jungleMobs);
                     }
@@ -407,13 +412,13 @@ namespace GosuMechanicsYasuo
                 MoveToLimited(spotB.To3D());
 
                 var jminions = MinionManager.GetMinions(Program.myHero.ServerPosition, Program.E.Range, MinionTypes.All, MinionTeam.Neutral);
-                foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.E.Range)))
+                foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.myHero.AttackRange)))
                 {
                     if (jungleMobs == null)
                     {
                         return;
                     }
-                    if (Program.myHero.ServerPosition.Equals(spotB.To3D()) && jungleMobs.NetworkId.Equals(1073742182) && jungleMobs.IsVisible && Program.E.IsReady() && jungleMobs != null && jungleMobs.IsValidTarget(Program.E.Range) && Program.CanCastE(jungleMobs))
+                    if (Program.myHero.ServerPosition.Equals(spotB.To3D()) && jungleMobs.CharData.BaseSkinName != "SRU_Red" && jungleMobs.CharData.BaseSkinName != "SRU_RedMini4.1.3" && jungleMobs.IsVisible && Program.E.IsReady() && jungleMobs != null && jungleMobs.IsValidTarget(Program.E.Range) && Program.CanCastE(jungleMobs))
                     {
                         Program.E.CastOnUnit(jungleMobs);
                     }
@@ -441,13 +446,13 @@ namespace GosuMechanicsYasuo
                 MoveToLimited(spotD.To3D());
 
                 var jminions = MinionManager.GetMinions(Program.myHero.ServerPosition, Program.E.Range, MinionTypes.All, MinionTeam.Neutral);
-                foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.E.Range)))
+                foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(100)))
                 {
                     if (jungleMobs == null)
                     {
                         return;
                     }
-                    if (Program.myHero.ServerPosition.Equals(spotD.To3D()) && jungleMobs.NetworkId.Equals(1073742209) && jungleMobs.IsVisible && Program.E.IsReady() && jungleMobs != null && jungleMobs.IsValidTarget(Program.E.Range) && Program.CanCastE(jungleMobs))
+                    if (Program.myHero.ServerPosition.Equals(spotD.To3D()) && jungleMobs.CharData.BaseSkinName != "SRU_Razorbreak" && jungleMobs.CharData.BaseSkinName != "SRU_RazorbreakMini3.1.2" && jungleMobs.CharData.BaseSkinName != "SRU_RazorbreakMini3.1.4" && jungleMobs.IsVisible && Program.E.IsReady() && jungleMobs != null && jungleMobs.IsValidTarget(Program.E.Range) && Program.CanCastE(jungleMobs))
                     {
                         Program.E.CastOnUnit(jungleMobs);
                     }
@@ -464,13 +469,13 @@ namespace GosuMechanicsYasuo
                     {
                         return;
                     }
-                    if (Program.myHero.ServerPosition.Equals(spotE.To3D()) && jungleMobs.NetworkId.Equals(1073742213) && jungleMobs.IsVisible && Program.E.IsReady() && jungleMobs != null && jungleMobs.IsValidTarget(Program.E.Range) && Program.CanCastE(jungleMobs))
+                    if (Program.myHero.ServerPosition.Equals(spotE.To3D()) && jungleMobs.CharData.BaseSkinName == "SRU_KrugMini" && jungleMobs.IsVisible && Program.E.IsReady() && jungleMobs != null && jungleMobs.IsValidTarget(Program.E.Range) && Program.CanCastE(jungleMobs))
                     {
                         Program.E.CastOnUnit(jungleMobs);
                     }
                 }
             }
-            if (Program.myHero.Distance(spotF) <= 600)
+            if (Program.myHero.Distance(spotF) <= 400)
             {
                 MoveToLimited(spotF.To3D());
 
@@ -481,7 +486,7 @@ namespace GosuMechanicsYasuo
                     {
                         return;
                     }
-                    if (Program.myHero.ServerPosition.Equals(spotF.To3D()) && jungleMobs.NetworkId.Equals(1073742197) && jungleMobs.IsVisible && Program.E.IsReady() && jungleMobs != null && jungleMobs.IsValidTarget(Program.E.Range) && Program.CanCastE(jungleMobs))
+                    if (Program.myHero.ServerPosition.Equals(spotF.To3D()) && jungleMobs.CharData.BaseSkinName != "SRU_Blue" && jungleMobs.CharData.BaseSkinName != "SRU_BlueMini1.1.2" && jungleMobs.IsVisible && Program.E.IsReady() && jungleMobs != null && jungleMobs.IsValidTarget(Program.E.Range) && Program.CanCastE(jungleMobs))
                     {
                         Program.E.CastOnUnit(jungleMobs);
                     }
@@ -492,13 +497,13 @@ namespace GosuMechanicsYasuo
                 MoveToLimited(spotG.To3D());
 
                 var jminions = MinionManager.GetMinions(Program.myHero.ServerPosition, Program.E.Range, MinionTypes.All, MinionTeam.Neutral);
-                foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.E.Range)))
+                foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.myHero.AttackRange)))
                 {
                     if (jungleMobs == null)
                     {
                         return;
                     }
-                    if (Program.myHero.ServerPosition.Equals(spotG.To3D()) && jungleMobs.NetworkId.Equals(1073742225) && jungleMobs.IsVisible && Program.E.IsReady() && jungleMobs != null && jungleMobs.IsValidTarget(Program.E.Range) && Program.CanCastE(jungleMobs))
+                    if (Program.myHero.ServerPosition.Equals(spotG.To3D()) && jungleMobs.CharData.BaseSkinName != "SRU_Murkwolf" && jungleMobs.CharData.BaseSkinName != "SRU_MurkwolfMini2.1.3" && jungleMobs.IsVisible && Program.E.IsReady() && jungleMobs != null && jungleMobs.IsValidTarget(Program.E.Range) && Program.CanCastE(jungleMobs))
                     {
                         Program.E.CastOnUnit(jungleMobs);
                     }
@@ -521,24 +526,24 @@ namespace GosuMechanicsYasuo
                     }
                 }
             }
-            if (Program.myHero.Distance(spotI) <= 250)
+            if (Program.myHero.Distance(spotI) <= 120)
             {
                 MoveToLimited(spotI.To3D());
 
                 var jminions = MinionManager.GetMinions(Program.myHero.ServerPosition, Program.E.Range, MinionTypes.All, MinionTeam.Neutral);
-                foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.E.Range)))
+                foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(100)))
                 {
                     if (jungleMobs == null)
                     {
                         return;
                     }
-                    if (Program.myHero.ServerPosition.Equals(spotI.To3D()) && jungleMobs.NetworkId.Equals(1073742231) && jungleMobs.IsVisible && Program.E.IsReady() && jungleMobs != null && jungleMobs.IsValidTarget(Program.E.Range) && Program.CanCastE(jungleMobs))
+                    if (Program.myHero.ServerPosition.Equals(spotI.To3D()) && jungleMobs.CharData.BaseSkinName != "SRU_Murkwolf" && jungleMobs.CharData.BaseSkinName != "SRU_MurkwolfMini8.1.3" && jungleMobs.IsVisible && Program.E.IsReady() && jungleMobs != null && jungleMobs.IsValidTarget(Program.E.Range) && Program.CanCastE(jungleMobs))
                     {
                         Program.E.CastOnUnit(jungleMobs);
                     }
                 }
             }
-            if (Program.myHero.Distance(spotJ) <= 250)
+            if (Program.myHero.Distance(spotJ) <= 120)
             {
                 MoveToLimited(spotJ.To3D());
 
@@ -549,7 +554,75 @@ namespace GosuMechanicsYasuo
                     {
                         return;
                     }
-                    if (Program.myHero.ServerPosition.Equals(spotJ.To3D()) && jungleMobs.NetworkId.Equals(1073742233) && jungleMobs.IsVisible && Program.E.IsReady() && jungleMobs != null && jungleMobs.IsValidTarget(Program.E.Range) && Program.CanCastE(jungleMobs))
+                    if (Program.myHero.ServerPosition.Equals(spotJ.To3D()) && jungleMobs.CharData.BaseSkinName != "SRU_Murkwolf" && jungleMobs.CharData.BaseSkinName != "SRU_MurkwolfMini8.1.2" && jungleMobs.IsVisible && Program.E.IsReady() && jungleMobs != null && jungleMobs.IsValidTarget(Program.E.Range) && Program.CanCastE(jungleMobs))
+                    {
+                        Program.E.CastOnUnit(jungleMobs);
+                    }
+                }
+            }
+            if (Program.myHero.Distance(spotL) <= 600)
+            {
+                MoveToLimited(spotL.To3D());
+
+                var jminions = MinionManager.GetMinions(Program.myHero.ServerPosition, Program.E.Range, MinionTypes.All, MinionTeam.Neutral);
+                foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.E.Range)))
+                {
+                    if (jungleMobs == null)
+                    {
+                        return;
+                    }
+                    if (Program.myHero.ServerPosition.Equals(spotL.To3D()) && jungleMobs.CharData.BaseSkinName == "SRU_KrugMini" && jungleMobs.IsVisible && Program.E.IsReady() && jungleMobs != null && jungleMobs.IsValidTarget(Program.E.Range) && Program.CanCastE(jungleMobs))
+                    {
+                        Program.E.CastOnUnit(jungleMobs);
+                    }
+                }
+            }
+            if (Program.myHero.Distance(spotM) <= 200)
+            {
+                MoveToLimited(spotM.To3D());
+
+                var jminions = MinionManager.GetMinions(Program.myHero.ServerPosition, Program.E.Range, MinionTypes.All, MinionTeam.Neutral);
+                foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.myHero.AttackRange)))
+                {
+                    if (jungleMobs == null)
+                    {
+                        return;
+                    }
+                    if (Program.myHero.ServerPosition.Equals(spotM.To3D()) && jungleMobs.CharData.BaseSkinName != "SRU_Red" && jungleMobs.CharData.BaseSkinName != "SRU_RedMini10.1.3" && jungleMobs.IsVisible && Program.E.IsReady() && jungleMobs != null && jungleMobs.IsValidTarget(Program.E.Range) && Program.CanCastE(jungleMobs))
+                    {
+                        Program.E.CastOnUnit(jungleMobs);
+                    }
+                }
+            }
+            if (Program.myHero.Distance(spotN) <= 600)
+            {
+                MoveToLimited(spotN.To3D());
+
+                var jminions = MinionManager.GetMinions(Program.myHero.ServerPosition, Program.E.Range, MinionTypes.All, MinionTeam.Neutral);
+                foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(100)))
+                {
+                    if (jungleMobs == null)
+                    {
+                        return;
+                    }
+                    if (Program.myHero.ServerPosition.Equals(spotN.To3D()) && jungleMobs.CharData.BaseSkinName != "SRU_RazorbreakMini9.1.2" && jungleMobs.CharData.BaseSkinName != "SRU_RazorbreakMini9.1.4" && jungleMobs.CharData.BaseSkinName != "SRU_Razorbreak" && jungleMobs.IsVisible && Program.E.IsReady() && jungleMobs != null && Program.CanCastE(jungleMobs))
+                    {
+                        Program.E.CastOnUnit(jungleMobs);
+                    }
+                }
+            }
+            if (Program.myHero.Distance(spotO) <= 200)
+            {
+                MoveToLimited(spotO.To3D());
+
+                var jminions = MinionManager.GetMinions(Program.myHero.ServerPosition, Program.E.Range, MinionTypes.All, MinionTeam.Neutral);
+                foreach (var jungleMobs in jminions.Where(x => x.IsValidTarget(Program.myHero.AttackRange)))
+                {
+                    if (jungleMobs == null)
+                    {
+                        return;
+                    }
+                    if (Program.myHero.ServerPosition.Equals(spotO.To3D()) && jungleMobs.CharData.BaseSkinName != "SRU_Red" && jungleMobs.CharData.BaseSkinName != "SRU_RedMini10.1.2" && jungleMobs.IsVisible && Program.E.IsReady() && jungleMobs != null && jungleMobs.IsValidTarget(Program.E.Range) && Program.CanCastE(jungleMobs))
                     {
                         Program.E.CastOnUnit(jungleMobs);
                     }
