@@ -684,15 +684,7 @@ namespace GosuMechanicsYasuo
                 if (Q3READY() && Q3.IsReady() && TsTarget.IsValidTarget(Q3.Range) && !IsDashing)
                 {
                     PredictionOutput Q3Pred = Q3.GetPrediction(TsTarget);
-                    if (Q3.IsInRange(TsTarget) && Q3Pred.Hitchance >= HitChance.Medium && myHero.Distance(TsTarget) > E.Range) 
-                    {
-                        Q3.Cast(Q3Pred.CastPosition, true);
-                    }
-                }
-                else if (!CanCastE(TsTarget) && Q3READY() && Q3.IsReady() && TsTarget.IsValidTarget(550) && !IsDashing)
-                {
-                    PredictionOutput Q3Pred = Q3.GetPrediction(TsTarget);
-                    if (Q3.IsInRange(TsTarget) && Q3Pred.Hitchance >= HitChance.Medium && myHero.Distance(TsTarget) <= E.Range)
+                    if (Q3.IsInRange(TsTarget) && Q3Pred.Hitchance >= HitChance.Medium) 
                     {
                         Q3.Cast(Q3Pred.CastPosition, true);
                     }
