@@ -683,12 +683,8 @@ namespace GosuMechanicsYasuo
             {
                 if (Q3READY() && Q3.IsReady() && TsTarget.IsValidTarget(Q3.Range) && !IsDashing)
                 {
-                    CastQ3AoE();
-                }
-                if (Q3READY() && Q3.IsReady() && TsTarget.IsValidTarget(Q3.Range) && !IsDashing)
-                {
                     PredictionOutput Q3Pred = Q3.GetPrediction(TsTarget);
-                    if (Q3.IsInRange(TsTarget) && Q3Pred.Hitchance >= HitChance.Medium && myHero.Distance(TsTarget) > 550) 
+                    if (Q3.IsInRange(TsTarget) && Q3Pred.Hitchance >= HitChance.Medium && myHero.Distance(TsTarget) > E.Range) 
                     {
                         Q3.Cast(Q3Pred.CastPosition, true);
                     }
@@ -696,7 +692,7 @@ namespace GosuMechanicsYasuo
                 else if (!CanCastE(TsTarget) && Q3READY() && Q3.IsReady() && TsTarget.IsValidTarget(550) && !IsDashing)
                 {
                     PredictionOutput Q3Pred = Q3.GetPrediction(TsTarget);
-                    if (Q3.IsInRange(TsTarget) && Q3Pred.Hitchance >= HitChance.Medium && myHero.Distance(TsTarget) <= 550)
+                    if (Q3.IsInRange(TsTarget) && Q3Pred.Hitchance >= HitChance.Medium && myHero.Distance(TsTarget) <= E.Range)
                     {
                         Q3.Cast(Q3Pred.CastPosition, true);
                     }
@@ -708,8 +704,7 @@ namespace GosuMechanicsYasuo
                     {
                         Q.Cast(QPred.CastPosition, true);
                     }
-                }
-          
+                } 
             }
             if (Config.Item("smartW").GetValue<bool>())
             {
