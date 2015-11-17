@@ -77,6 +77,9 @@ namespace GosuMechanicsYasuo
 
         private static void Game_OnGameLoad(EventArgs args)
         {
+            if (myHero.ChampionName != "Yasuo")
+                return;
+
             Q = new Spell(SpellSlot.Q, 475);
             Q3 = new Spell(SpellSlot.Q, 1000);
 
@@ -94,10 +97,7 @@ namespace GosuMechanicsYasuo
             {
                 Flash = new Spell(slot, 425);
             }
-
-            if (myHero.ChampionName != "Yasuo")
-                return;
-
+         
             Config = new Menu("GosuMechanics Yasuo", "Yasuo", true);
             Game.PrintChat("GosuMechanics Yasuo Loaded!");
             Game.PrintChat("Credits to BestTuks for his Windwall and E-vade functions!");
@@ -338,7 +338,7 @@ namespace GosuMechanicsYasuo
             AutoR();
             KillSteal();
 
-            if (Config.Item("AutoQHarass").GetValue<KeyBind>().Active && Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.Combo)
+            if (!IsDashing && Config.Item("AutoQHarass").GetValue<KeyBind>().Active && Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.Combo)
             {
                 var TsTarget = TargetSelector.GetTarget(1000, TargetSelector.DamageType.Physical);
 
@@ -352,7 +352,7 @@ namespace GosuMechanicsYasuo
                 }
             }
 
-            if (Config.Item("AutoQHarass").GetValue<KeyBind>().Active && Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.Combo)
+            if (!IsDashing && Config.Item("AutoQHarass").GetValue<KeyBind>().Active && Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.Combo)
             {
                 var TsTarget = TargetSelector.GetTarget(475, TargetSelector.DamageType.Physical);
 
@@ -689,7 +689,7 @@ namespace GosuMechanicsYasuo
                         Q3.Cast(Q3Pred.CastPosition, true);
                     }
                 }
-                if (!Q3READY() && Q.IsReady() && TsTarget.IsValidTarget(Q.Range) && !IsDashing)
+                if (!Q3READY() && Q.IsReady() && TsTarget.IsValidTarget(Q.Range))
                 {
                     PredictionOutput QPred = Q.GetPrediction(TsTarget);
                     if (Q.IsInRange(TsTarget) && QPred.Hitchance >= HitChance.Medium)
@@ -1690,23 +1690,23 @@ namespace GosuMechanicsYasuo
             }
             if (Config.Item("DrawQ").GetValue<bool>() && Q.IsReady())
             {
-                Render.Circle.DrawCircle(myHero.ServerPosition, Q.Range, Color.LightGreen);
+                Render.Circle.DrawCircle(myHero.Position, Q.Range, Color.LightGreen);
             }
             if (Config.Item("DrawQ3").GetValue<bool>() && Q3.IsReady())
             {
-                Render.Circle.DrawCircle(myHero.ServerPosition, Q3.Range, Color.LightGreen);
+                Render.Circle.DrawCircle(myHero.Position, Q3.Range, Color.LightGreen);
             }
             if (Config.Item("DrawW").GetValue<bool>() && W.IsReady())
             {
-                Render.Circle.DrawCircle(myHero.ServerPosition, W.Range, Color.LightGreen);
+                Render.Circle.DrawCircle(myHero.Position, W.Range, Color.LightGreen);
             }
             if (Config.Item("DrawE").GetValue<bool>() && E.IsReady())
             {
-                Render.Circle.DrawCircle(myHero.ServerPosition, E.Range, Color.LightGreen);
+                Render.Circle.DrawCircle(myHero.Position, E.Range, Color.LightGreen);
             }
             if (Config.Item("DrawR").GetValue<bool>() && R.IsReady())
             {
-                Render.Circle.DrawCircle(myHero.ServerPosition, R.Range, Color.LightGreen);
+                Render.Circle.DrawCircle(myHero.Position, R.Range, Color.LightGreen);
             }
             if (Config.Item("DrawSpots").GetValue<bool>())
             {
